@@ -1,0 +1,212 @@
+<title>함께 기도 달성표</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one narrow column like a church bulletin card — big group % first, then entry, then the record table. */
+:root{
+  --bg:#f5f2ec; --card:#fffdf8; --fg:#23211d; --muted:#6c665c; --line:#e2dccf;
+  --accent:#7a4e2d; --accent-soft:#efe3d6; --good:#2f6b46; --warn:#9a6a12;
+  --display:"Gowun Batang",Georgia,serif; --body:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1815;--card:#24211d;--fg:#ece6da;--muted:#a59d8f;--line:#3a352e;--accent:#d9a77c;--accent-soft:#3a2e24;--good:#7cc497;--warn:#e0b25a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1815;--card:#24211d;--fg:#ece6da;--muted:#a59d8f;--line:#3a352e;--accent:#d9a77c;--accent-soft:#3a2e24;--good:#7cc497;--warn:#e0b25a;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+h1{font-family:var(--display);font-size:26px;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.pct-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pct{display:grid;gap:4px}
+.pct .lbl{font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.pct .num{font-family:var(--mono);font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.pct .num.today{color:var(--accent)}
+.pct .det{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:8px;border-radius:99px;background:var(--accent-soft);overflow:hidden}
+.bar > i{display:block;height:100%;background:var(--accent);border-radius:99px;width:0}
+h2{font-size:15px;margin:0 0 10px;font-weight:600}
+form{display:grid;gap:10px}
+.fields{display:grid;grid-template-columns:1.3fr 1fr .8fr;gap:8px}
+@media (max-width:420px){.fields{grid-template-columns:1fr 1fr}.fields .full{grid-column:1/-1}}
+label{display:grid;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+input,select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;box-sizing:border-box}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 14px;background:var(--accent);color:var(--card);cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--line);font-weight:400;padding:7px 10px}
+button:disabled{opacity:.5;cursor:default}
+.msg{font-size:13px;min-height:1.2em;color:var(--muted)}
+.msg.ok{color:var(--good)} .msg.err{color:var(--warn)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:600}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right} th.n{text-align:right}
+.chip{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;background:var(--accent-soft);color:var(--accent)}
+.chip.full{background:transparent;color:var(--good);border:1px solid var(--good)}
+.empty{color:var(--muted);font-size:13px;padding:6px 0}
+details summary{cursor:pointer;color:var(--muted);font-size:13px}
+.members{display:grid;gap:6px;margin-top:10px}
+.mrow{display:grid;grid-template-columns:1fr 80px auto;gap:6px;align-items:center}
+.note{font-size:12px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.bar > i{transition:width .5s ease}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>함께 기도 달성표</h1>
+    <p class="sub" id="goalLine">신자 10명 · 한 사람 하루 목표 60분 · 전체 목표 600분</p>
+  </header>
+
+  <section class="card" aria-label="전체 목표 달성률">
+    <div class="pct-row">
+      <div class="pct"><span class="lbl">오늘</span><span class="num today" id="pToday">–</span><span class="det" id="dToday">기록을 불러오는 중</span><div class="bar"><i id="bToday"></i></div></div>
+      <div class="pct"><span class="lbl">어제</span><span class="num" id="pYest">–</span><span class="det" id="dYest">&nbsp;</span><div class="bar"><i id="bYest"></i></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>기도 시간 기록</h2>
+    <form id="f">
+      <div class="fields">
+        <label class="full">이름<select id="fName"></select></label>
+        <label>날짜<input id="fDate" type="date" required></label>
+        <label>기도시간(분)<input id="fMin" type="number" min="0" max="1440" step="1" inputmode="numeric" required placeholder="60"></label>
+      </div>
+      <button id="fSave" type="submit">기록하기</button>
+      <div class="msg" id="fMsg" role="status"></div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>기록표</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>이름</th><th>날짜</th><th class="n">기도시간</th><th class="n">전체 목표 달성률</th></tr></thead>
+      <tbody id="rows"><tr><td colspan="4" class="empty">아직 기록이 없습니다. 위에서 이름과 기도시간을 넣고 ‘기록하기’를 누르면 여기에 나타납니다.</td></tr></tbody>
+    </table></div>
+  </section>
+
+  <section class="card" id="adminBox" hidden>
+    <details>
+      <summary>신자 이름과 하루 목표 바꾸기 (관리자)</summary>
+      <div class="members" id="mList"></div>
+      <p class="note" id="mCount"></p>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button type="button" class="ghost" id="mAdd">+ 신자 추가</button>
+        <button type="button" id="mSave">저장</button>
+        <span class="msg" id="mMsg"></span>
+      </div>
+    </details>
+  </section>
+  <p class="note">달성률 = 그날 신자들이 기도한 시간의 합 ÷ 모든 신자의 하루 목표 합. 같은 사람이 같은 날 다시 기록하면 새 값으로 바뀝니다.</p>
+</div>
+
+<script>
+(function(){
+  const DEFAULT = Array.from({length:10},(_,i)=>({name:"신자 "+(i+1),goal:60}));
+  let members = DEFAULT.slice(), logs = [], db = null, canWrite = true;
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2,"0");
+  const dstr = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  const today = () => dstr(new Date());
+  const yesterday = () => { const d=new Date(); d.setDate(d.getDate()-1); return dstr(d); };
+  const totalGoal = () => members.reduce((s,m)=>s+(+m.goal||0),0);
+  function pctFor(date){
+    const g = totalGoal(); const sum = logs.filter(l=>l.date===date).reduce((s,l)=>s+(+l.minutes||0),0);
+    return {sum, g, p: g ? Math.round(sum/g*100) : 0};
+  }
+  function fmtMin(m){ m=+m||0; const h=Math.floor(m/60), r=m%60; return h? (h+"시간"+(r? " "+r+"분":"")) : (r+"분"); }
+  function renderPct(){
+    const t=pctFor(today()), y=pctFor(yesterday());
+    $("pToday").textContent=t.p+"%"; $("dToday").textContent=fmtMin(t.sum)+" / "+fmtMin(t.g);
+    $("pYest").textContent=y.p+"%"; $("dYest").textContent=fmtMin(y.sum)+" / "+fmtMin(y.g);
+    $("bToday").style.width=Math.min(100,t.p)+"%"; $("bYest").style.width=Math.min(100,y.p)+"%";
+    $("goalLine").textContent="신자 "+members.length+"명 · 전체 하루 목표 "+fmtMin(totalGoal());
+  }
+  function renderSelect(){
+    const s=$("fName"), cur=s.value; s.textContent="";
+    members.forEach(m=>{ const o=document.createElement("option"); o.value=m.name; o.textContent=m.name+" (목표 "+m.goal+"분)"; s.appendChild(o); });
+    if(cur) s.value=cur;
+    try{ const saved=localStorage.getItem("prayer.name"); if(saved && members.some(m=>m.name===saved) && !cur) s.value=saved; }catch(e){}
+  }
+  function renderRows(){
+    const tb=$("rows"); tb.textContent="";
+    const sorted=logs.slice().sort((a,b)=> b.date.localeCompare(a.date) || a.name.localeCompare(b.name,"ko"));
+    if(!sorted.length){ const tr=document.createElement("tr"); const td=document.createElement("td"); td.colSpan=4; td.className="empty"; td.textContent="아직 기록이 없습니다. 위에서 이름과 기도시간을 넣고 ‘기록하기’를 누르면 여기에 나타납니다."; tr.appendChild(td); tb.appendChild(tr); return; }
+    sorted.slice(0,200).forEach(l=>{
+      const tr=document.createElement("tr"); const p=pctFor(l.date).p;
+      [l.name,l.date,fmtMin(l.minutes)].forEach((v,i)=>{ const td=document.createElement("td"); td.textContent=v; if(i===2) td.className="n"; tr.appendChild(td); });
+      const td=document.createElement("td"); td.className="n"; const c=document.createElement("span"); c.className="chip"+(p>=100?" full":""); c.textContent=p+"%"; td.appendChild(c); tr.appendChild(td);
+      tb.appendChild(tr);
+    });
+  }
+  function renderAll(){ renderPct(); renderSelect(); renderRows(); }
+  let draft = null;
+  function readDraft(){ return draft.map((m,i)=>({name:($("mN"+i).value||"").trim(), goal:Math.max(0,Math.round(+$("mG"+i).value||0))})); }
+  function renderAdmin(keep){
+    if(!keep || !draft) draft = members.map(m=>({...m}));
+    const box=$("mList"); box.textContent="";
+    draft.forEach((m,i)=>{
+      const row=document.createElement("div"); row.className="mrow";
+      const n=document.createElement("input"); n.id="mN"+i; n.value=m.name; n.setAttribute("aria-label","신자 "+(i+1)+" 이름");
+      const g=document.createElement("input"); g.id="mG"+i; g.type="number"; g.min="0"; g.max="1440"; g.value=m.goal; g.setAttribute("aria-label","신자 "+(i+1)+" 하루 목표(분)");
+      const x=document.createElement("button"); x.type="button"; x.className="ghost"; x.textContent="빼기"; x.setAttribute("aria-label",(m.name||"신자")+" 빼기");
+      x.addEventListener("click",()=>{ draft=readDraft(); draft.splice(i,1); renderAdmin(true); msg($("mMsg"),"아직 저장하지 않았습니다. ‘저장’을 누르면 반영됩니다.",""); });
+      row.append(n,g,x); box.appendChild(row);
+    });
+    $("mCount").textContent="신자 "+draft.length+"명 · 전체 하루 목표 "+fmtMin(draft.reduce((s,m)=>s+(+m.goal||0),0));
+  }
+  $("fDate").value=today();
+  renderAll();
+
+  const msg=(el,t,cls)=>{ el.textContent=t; el.className="msg"+(cls?" "+cls:""); };
+  $("f").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const name=$("fName").value, date=$("fDate").value, minutes=Math.round(+$("fMin").value);
+    if(!name||!date||!(minutes>=0)){ msg($("fMsg"),"이름, 날짜, 기도시간(분)을 모두 넣어 주세요.","err"); return; }
+    try{ localStorage.setItem("prayer.name",name); }catch(e){}
+    if(!db){ msg($("fMsg"),"기록 저장소에 연결되지 않아 저장하지 못했습니다. 잠시 뒤 다시 열어 주세요.","err"); return; }
+    if(!canWrite){ msg($("fMsg"),"이 화면에서는 기록할 권한이 없습니다. 관리자에게 기록 권한을 요청해 주세요.","err"); return; }
+    const idx=members.findIndex(m=>m.name===name);
+    $("fSave").disabled=true;
+    try{
+      await db.collection("logs").doc(date+"_m"+idx).set({name,date,minutes,member:idx});
+      msg($("fMsg"),name+" · "+date+" · "+fmtMin(minutes)+" 기록했습니다.","ok"); $("fMin").value="";
+    }catch(err){
+      if(err&&err.code==="invalid_argument"){ canWrite=false; msg($("fMsg"),"기록할 권한이 없습니다. 관리자에게 기록 권한을 요청해 주세요.","err"); }
+      else msg($("fMsg"),"저장하지 못했습니다. 다시 눌러 주세요.","err");
+    }finally{ $("fSave").disabled=false; }
+  });
+
+  $("mAdd").addEventListener("click", ()=>{
+    draft=readDraft(); let k=draft.length+1; while(draft.some(m=>m.name==="신자 "+k)) k++;
+    draft.push({name:"신자 "+k, goal:60}); renderAdmin(true);
+    msg($("mMsg"),"아직 저장하지 않았습니다. 이름을 고친 뒤 ‘저장’을 누르세요.","");
+  });
+  $("mSave").addEventListener("click", async ()=>{
+    const next=readDraft();
+    if(!next.length){ msg($("mMsg"),"신자가 한 명 이상 있어야 합니다.","err"); return; }
+    if(next.some(m=>!m.name)){ msg($("mMsg"),"비어 있는 이름이 있습니다. 이름을 적어 주세요.","err"); return; }
+    if(new Set(next.map(m=>m.name)).size!==next.length){ msg($("mMsg"),"이름이 겹칩니다. 서로 다르게 적어 주세요.","err"); return; }
+    try{ await db.doc("config/group").set({members:next}); msg($("mMsg"),"저장했습니다.","ok"); }
+    catch(e){ msg($("mMsg"),"저장하지 못했습니다 (관리자만 바꿀 수 있습니다).","err"); }
+  });
+
+  (async ()=>{
+    if(!window.claude || !claude.use){ msg($("dToday"),"기록 저장소에 연결할 수 없습니다."); return; }
+    db = await claude.use("db");
+    const user = await claude.use("user");
+    if(!db){ $("dToday").textContent="로그인한 상태에서만 기록이 보입니다."; return; }
+    try{ const w = user ? await user.can("data.write") : null; if(w===false) canWrite=false; if(user && await user.canEdit()){ $("adminBox").hidden=false; renderAdmin(); } }catch(e){}
+    const timer=setTimeout(()=>{ $("dToday").textContent="기록 저장소가 아직 응답하지 않습니다."; },10000);
+    db.doc("config/group").onSnapshot(s=>{
+      const d=s.exists && s.data(); if(d && Array.isArray(d.members) && d.members.length){ members=d.members.map(m=>({name:String(m.name),goal:+m.goal||0})); }
+      renderAll(); if(!$("adminBox").hidden) renderAdmin(false);
+    }, ()=>{});
+    db.collection("logs").onSnapshot(s=>{
+      if(!s.metadata.fromCache) clearTimeout(timer);
+      logs=s.docs.map(d=>d.data()).filter(Boolean).map(l=>({name:String(l.name),date:String(l.date),minutes:+l.minutes||0}));
+      renderAll();
+    }, ()=>{ clearTimeout(timer); $("dToday").textContent="기록을 불러오지 못했습니다."; });
+  })();
+})();
+</script>

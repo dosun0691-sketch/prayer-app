@@ -1,0 +1,10 @@
+# signing key + password: NEVER commit (needed for every future update — back it up separately)
+android/android.keystore
+android/keystore-info.txt
+android/app/build/
+android/.gradle/
+android/build/
+android/*.apk
+.firebase/
+.login.log
+node_modules/
