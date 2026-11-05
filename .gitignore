@@ -8,3 +8,4 @@ android/*.apk
 .firebase/
 .login.log
 node_modules/
+android/*.idsig
