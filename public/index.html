@@ -70,6 +70,19 @@ td.n,th.n{text-align:right} td.n{font-family:var(--mono);font-variant-numeric:ta
     </div>
   </section>
 
+  <section class="card" id="regBox">
+    <h2>처음 오셨나요? 내 이름 등록</h2>
+    <form id="r">
+      <div class="fields">
+        <label class="full">이름<input id="rName" maxlength="20" required placeholder="예: 김은혜"></label>
+        <label>하루 목표(분)<input id="rGoal" type="number" min="10" max="600" step="5" inputmode="numeric" value="60" required></label>
+      </div>
+      <button id="rSave" type="submit">등록하기</button>
+      <div class="msg" id="rMsg" role="status"></div>
+      <p class="note">한 번만 등록하면 됩니다. 이름이 틀렸거나 지워야 하면 목사님께 말씀해 주세요.</p>
+    </form>
+  </section>
+
   <section class="card">
     <h2>기도 시간 기록</h2>
     <form id="f">
@@ -96,6 +109,7 @@ td.n,th.n{text-align:right} td.n{font-family:var(--mono);font-variant-numeric:ta
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, collection, query, where, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const newId = () => Array.from(crypto.getRandomValues(new Uint8Array(12)), b => "abcdefghijklmnopqrstuvwxyz0123456789"[b % 36]).join("");
 
 const app = initializeApp({
   apiKey: "AIzaSyAALHdScHzNF3iWGXn9JS6YjLya0NBjPW4",
@@ -125,7 +139,7 @@ function render() {
   $("pToday").textContent = t.p + "%"; $("dToday").textContent = fmtMin(t.sum) + " / " + fmtMin(t.g);
   $("pYest").textContent = y.p + "%"; $("dYest").textContent = fmtMin(y.sum) + " / " + fmtMin(y.g);
   $("bToday").style.width = Math.min(100, t.p) + "%"; $("bYest").style.width = Math.min(100, y.p) + "%";
-  $("goalLine").textContent = "신자 " + members.length + "명 · 전체 하루 목표 " + fmtMin(totalGoal());
+  $("goalLine").textContent = "등록한 신자 " + members.length + "명 · 전체 하루 목표 " + fmtMin(totalGoal());
   const s = $("fName"), cur = s.value; s.textContent = "";
   members.forEach(m => { const o = document.createElement("option"); o.value = m.id; o.textContent = m.name + " (목표 " + m.goal + "분)"; s.appendChild(o); });
   let saved = null; try { saved = localStorage.getItem("prayer.member"); } catch (e) {}
@@ -144,11 +158,32 @@ function render() {
 
 $("fDate").value = daysAgo(0);
 const timer = setTimeout(() => { $("dToday").textContent = "인터넷 연결을 확인해 주세요."; }, 10000);
-onSnapshot(doc(db, "config", "group"), s => {
-  const d = s.exists() ? s.data() : null;
-  members = (d && Array.isArray(d.members)) ? d.members.map(m => ({ id: String(m.id), name: String(m.name), goal: +m.goal || 0 })) : [];
+onSnapshot(collection(db, "members"), s => {
+  members = s.docs.map(d => ({ id: d.id, name: String(d.data().name), goal: +d.data().goal || 0 })).sort((a, b) => a.name.localeCompare(b.name, "ko"));
+  let mine = null; try { mine = localStorage.getItem("prayer.member"); } catch (e) {}
+  $("regBox").hidden = !!(mine && members.some(m => m.id === mine));
+  if (!members.length) $("goalLine").textContent = "아직 등록한 신자가 없습니다. 아래에서 이름을 등록해 주세요.";
   render();
+  if (!members.length) $("goalLine").textContent = "아직 등록한 신자가 없습니다. 아래에서 이름을 등록해 주세요.";
 }, () => { $("goalLine").textContent = "신자 명단을 불러오지 못했습니다."; });
+
+const rmsg = (t, cls) => { const el = $("rMsg"); el.textContent = t; el.className = "msg" + (cls ? " " + cls : ""); };
+$("r").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const name = $("rName").value.trim().replace(/\s+/g, " "), goal = Math.round(+$("rGoal").value);
+  if (!name || name.length > 20) { rmsg("이름을 1~20자로 적어 주세요.", "err"); return; }
+  if (!(goal >= 10 && goal <= 600)) { rmsg("하루 목표는 10분에서 600분 사이로 적어 주세요.", "err"); return; }
+  if (members.some(m => m.name === name)) { rmsg("‘" + name + "’ 이름이 이미 있습니다. 본인이면 아래 기록 칸에서 이름을 고르세요. 다른 분이면 이름 뒤에 구분(예: 김은혜B)을 붙여 주세요.", "err"); return; }
+  $("rSave").disabled = true;
+  const id = newId();
+  try {
+    await setDoc(doc(db, "members", id), { name, goal });
+    try { localStorage.setItem("prayer.member", id); } catch (e) {}
+    rmsg(name + "님, 등록되었습니다. 이제 아래에서 기도 시간을 기록하세요.", "ok"); $("rName").value = "";
+    setTimeout(() => { $("fName").value = id; }, 300);
+  } catch (e) { rmsg("등록하지 못했습니다. 인터넷 연결을 확인하고 다시 눌러 주세요.", "err"); }
+  finally { $("rSave").disabled = false; }
+});
 onSnapshot(query(collection(db, "entries"), where("date", ">=", daysAgo(13))), s => {
   clearTimeout(timer);
   entries = s.docs.map(d => d.data()).map(e => ({ date: String(e.date), member: String(e.member), minutes: +e.minutes || 0 }));
