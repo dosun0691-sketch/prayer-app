@@ -19,8 +19,8 @@
     "path": "C:\\Users\\apple\\prayer-app\\android\\android.keystore",
     "alias": "prayer"
   },
-  "appVersionName": "1.0.0",
-  "appVersionCode": 1,
+  "appVersionName": "1.0.1",
+  "appVersionCode": 2,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://ourfamily-prayer-11060015.web.app/manifest.json",
@@ -40,6 +40,6 @@
   "retainedBundles": [],
   "protocolHandlers": [],
   "fileHandlers": [],
-  "appVersion": "1.0.0",
+  "appVersion": "1.0.1",
   "serviceAccountJsonFile": ""
 }
