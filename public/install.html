@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>기도 달성표 설치 안내</title>
+<title>기도 달성표 설치 안내 · 安裝說明</title>
 <meta name="theme-color" content="#7a4e2d">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
@@ -11,10 +11,13 @@
 :root{--bg:#f5f2ec;--card:#fffdf8;--fg:#23211d;--muted:#6c665c;--line:#e2dccf;--accent:#7a4e2d;--accent-soft:#efe3d6;color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#1a1815;--card:#24211d;--fg:#ece6da;--muted:#a59d8f;--line:#3a352e;--accent:#d9a77c;--accent-soft:#3a2e24;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;font-size:16px;line-height:1.6}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"IBM Plex Sans KR","Malgun Gothic","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:16px;line-height:1.6}
 .wrap{max-width:560px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
-h1{font-family:"Gowun Batang",Georgia,serif;font-size:26px;margin:0}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+h1{font-family:"Gowun Batang","Noto Serif TC",Georgia,serif;font-size:26px;margin:0}
 h2{font-size:18px;margin:0 0 8px}
+.lang{flex:none;font:inherit;font-size:13px;font-weight:600;background:transparent;color:var(--accent);border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer}
 .sub{color:var(--muted);margin:4px 0 0;font-size:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
 ol{margin:8px 0 0;padding-left:1.3em;display:grid;gap:6px}
@@ -25,37 +28,36 @@ ol{margin:8px 0 0;padding-left:1.3em;display:grid;gap:6px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>기도 달성표 설치하기</h1>
-    <p class="sub">휴대폰 종류에 맞는 안내를 따라 주세요. 어느 쪽으로 설치해도 같은 기록을 함께 봅니다.</p>
-  </header>
-
-  <section class="card" id="android">
-    <span class="tag">안드로이드 (삼성·LG 등)</span>
-    <h2>앱 파일 받아서 설치</h2>
-    <ol>
-      <li>아래 <b>앱 다운로드</b> 버튼을 누릅니다.</li>
-      <li>다운로드가 끝나면 알림이나 ‘내 파일 → 다운로드’에서 <b>prayer-app.apk</b>를 누릅니다.</li>
-      <li>‘이 출처의 앱 설치 허용’ 화면이 나오면 <b>허용</b>을 켜고 뒤로 돌아옵니다. (처음 한 번만)</li>
-      <li><b>설치</b>를 누릅니다. 홈 화면에 ‘기도 달성표’ 아이콘이 생깁니다.</li>
-    </ol>
+<!-- 한국어 -->
+<div class="wrap" lang="ko" id="ko">
+  <header class="top"><div><h1>기도 달성표 설치하기</h1><p class="sub">휴대폰 종류에 맞는 안내를 따라 주세요. 어느 쪽으로 설치해도 같은 기록을 함께 봅니다.</p></div><button type="button" class="lang" data-to="zh">中文</button></header>
+  <section class="card"><span class="tag">안드로이드 (삼성 등)</span><h2>앱 파일 받아서 설치</h2>
+    <ol><li>아래 <b>앱 다운로드</b> 버튼을 누릅니다.</li><li>다운로드가 끝나면 알림이나 ‘내 파일 → 다운로드’에서 <b>prayer-app.apk</b>를 누릅니다.</li><li>‘이 출처의 앱 설치 허용’ 화면이 나오면 <b>허용</b>을 켜고 뒤로 돌아옵니다. (처음 한 번만)</li><li><b>설치</b>를 누릅니다. 홈 화면에 ‘기도 달성표’ 아이콘이 생깁니다.</li></ol>
     <a class="btn" href="https://github.com/dosun0691-sketch/prayer-app/releases/latest/download/prayer-app.apk">앱 다운로드 (약 1MB)</a>
-    <p class="note">Play 스토어 앱이 아니어서 ‘알 수 없는 앱’ 경고가 뜰 수 있습니다. 우리 교회에서 만든 앱입니다. 안드로이드 7.0 이상에서 됩니다.</p>
-  </section>
-
-  <section class="card" id="iphone">
-    <span class="tag">아이폰</span>
-    <h2>홈 화면에 추가</h2>
-    <ol>
-      <li><b>Safari</b>로 아래 주소를 엽니다. (카카오톡 안에서 열렸다면 오른쪽 아래 메뉴 → ‘Safari로 열기’)</li>
-      <li>아래쪽 가운데 <b>공유 버튼</b>(네모에서 위로 화살표)을 누릅니다.</li>
-      <li>목록을 내려 <b>‘홈 화면에 추가’</b>를 누르고, 오른쪽 위 <b>추가</b>를 누릅니다.</li>
-      <li>홈 화면의 ‘기도 달성표’ 아이콘으로 앱처럼 엽니다.</li>
-    </ol>
-    <a class="btn alt" href="./">기도 달성표 열기</a>
-    <p class="note">주소: ourfamily-prayer-11060015.web.app</p>
-  </section>
+    <p class="note">Play 스토어 앱이 아니어서 ‘알 수 없는 앱’ 경고가 뜰 수 있습니다. 우리 교회에서 만든 앱입니다. 안드로이드 7.0 이상에서 됩니다.</p></section>
+  <section class="card"><span class="tag">아이폰</span><h2>홈 화면에 추가</h2>
+    <ol><li><b>Safari</b>로 아래 버튼을 엽니다. (카카오톡·LINE 안에서 열렸다면 메뉴에서 ‘Safari로 열기’)</li><li>아래쪽 가운데 <b>공유 버튼</b>(네모에서 위로 화살표)을 누릅니다.</li><li>목록을 내려 <b>‘홈 화면에 추가’</b>를 누르고, 오른쪽 위 <b>추가</b>를 누릅니다.</li><li>홈 화면의 ‘기도 달성표’ 아이콘으로 앱처럼 엽니다.</li></ol>
+    <a class="btn alt" href="./">기도 달성표 열기</a><p class="note">주소: ourfamily-prayer-11060015.web.app</p></section>
 </div>
+<!-- 繁體中文 -->
+<div class="wrap" lang="zh-Hant-TW" id="zh" hidden>
+  <header class="top"><div><h1>安裝禱告達成表</h1><p class="sub">請依照你的手機種類操作。不論用哪一種方式安裝，大家看到的都是同一份紀錄。</p></div><button type="button" class="lang" data-to="ko">한국어</button></header>
+  <section class="card"><span class="tag">Android（三星等）</span><h2>下載App檔案安裝</h2>
+    <ol><li>按下方的<b>下載App</b>按鈕。</li><li>下載完成後，在通知或「我的檔案 → 下載」中點選 <b>prayer-app.apk</b>。</li><li>出現「允許安裝此來源的應用程式」時，請<b>開啟允許</b>，再返回。（只需第一次）</li><li>按<b>安裝</b>。主畫面會出現「기도 달성표」圖示。</li></ol>
+    <a class="btn" href="https://github.com/dosun0691-sketch/prayer-app/releases/latest/download/prayer-app.apk">下載App（約1MB）</a>
+    <p class="note">這不是 Play 商店的 App，可能會出現「未知的應用程式」警告。這是我們教會自己做的 App。Android 7.0 以上可以使用。</p></section>
+  <section class="card"><span class="tag">iPhone</span><h2>加入主畫面</h2>
+    <ol><li>用 <b>Safari</b> 打開下方按鈕。（如果是在 LINE 裡打開，請從選單選「用 Safari 開啟」）</li><li>按下方中間的<b>分享按鈕</b>（方框加向上箭頭）。</li><li>往下滑，按<b>「加入主畫面」</b>，再按右上角的<b>新增</b>。</li><li>之後從主畫面的圖示打開，就像 App 一樣使用。</li></ol>
+    <a class="btn alt" href="./">打開禱告達成表</a><p class="note">網址：ourfamily-prayer-11060015.web.app</p></section>
+</div>
+<script>
+(function(){
+  var lang=null; try{lang=localStorage.getItem("prayer.lang");}catch(e){}
+  if(lang!=="ko"&&lang!=="zh"){ var ls=navigator.languages||[navigator.language||""]; lang=ls.some(function(l){return /^zh/i.test(l);})?"zh":"ko"; }
+  function show(l){ document.getElementById("ko").hidden=l!=="ko"; document.getElementById("zh").hidden=l!=="zh"; document.documentElement.lang=l==="zh"?"zh-Hant-TW":"ko"; document.title=l==="zh"?"禱告達成表 安裝說明":"기도 달성표 설치 안내"; }
+  document.querySelectorAll("[data-to]").forEach(function(b){ b.addEventListener("click",function(){ var l=b.getAttribute("data-to"); try{localStorage.setItem("prayer.lang",l);}catch(e){} show(l); }); });
+  show(lang);
+})();
+</script>
 </body>
 </html>
