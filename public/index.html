@@ -37,6 +37,19 @@ h1{font-family:var(--display);font-weight:400;font-size:28px;margin:0;letter-spa
 .lang{flex:none;font-family:var(--display);font-size:15px;background:var(--paper);color:var(--peach-deep);border:2px solid var(--peach);border-radius:99px;padding:4px 14px;cursor:pointer;box-shadow:0 3px 0 var(--peach)}
 .sub{color:var(--soft);margin:2px 0 0;font-size:14px}
 
+.church{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:48px;height:48px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3px 0 var(--line);flex:none}
+.logo img{width:40px;height:40px;display:block}
+.cname{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-weight:700;font-size:22px;letter-spacing:2px}
+.verse{margin:0;background:var(--paper);border-radius:22px;padding:14px 18px;box-shadow:0 6px 0 var(--line);border-left:6px solid var(--sun)}
+.verse blockquote{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-weight:500;font-size:17px;line-height:1.7}
+.verse .vko{margin:6px 0 0;font-size:14px;color:var(--soft)}
+.verse figcaption{margin-top:6px;font-family:var(--display);font-size:15px;color:var(--peach-deep);text-align:right}
+.stats{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.stat{background:var(--bg);border-radius:16px;padding:8px 4px;display:grid;gap:2px}
+.stat .k{font-size:12px;color:var(--soft)}
+.stat b{font-family:var(--display);font-weight:400;font-size:17px;font-variant-numeric:tabular-nums}
+.stat.done b{color:var(--mint-deep)}
 /* hero */
 .hero{position:relative;background:var(--paper);border-radius:28px;padding:18px 16px 16px;box-shadow:0 6px 0 var(--line);text-align:center;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:auto -40px -80px -40px;height:160px;background:var(--sky);opacity:.25;border-radius:50%}
@@ -126,12 +139,19 @@ button:disabled{opacity:.5}
 
 <div class="wrap">
   <header class="top">
-    <div>
-      <h1 data-t="title">함께 기도 달성표</h1>
-      <p class="sub" id="goalLine"></p>
-    </div>
+    <div class="church"><span class="logo"><img src="logo.png" alt="" width="40" height="40"></span><span class="cname">我們家教會</span></div>
     <button type="button" class="lang" id="langBtn" aria-label="Language">中文</button>
   </header>
+  <div>
+    <h1 data-t="title">함께 기도 달성표</h1>
+    <p class="sub" id="goalLine"></p>
+  </div>
+
+  <figure class="verse">
+    <blockquote lang="zh-Hant-TW">你們祈求，就給你們；尋找，就尋見；叩門，就給你們開門。</blockquote>
+    <p class="vko" id="verseKo" lang="ko">구하라 그리하면 너희에게 주실 것이요 찾으라 그리하면 찾을 것이요 문을 두드리라 그리하면 너희에게 열릴 것이니</p>
+    <figcaption id="verseRef">馬太福音 7:7</figcaption>
+  </figure>
 
   <section class="hero" data-t-aria="pctAria" aria-label="">
     <svg class="sparkle" style="left:8%;top:14%" aria-hidden="true"><use href="#spark"/></svg>
@@ -150,6 +170,11 @@ button:disabled{opacity:.5}
       </div>
     </div>
     <p class="cheer" id="cheer"></p>
+    <div class="stats">
+      <div class="stat"><span class="k" data-t="sGoal">전체 목표</span><b id="sGoal">–</b></div>
+      <div class="stat"><span class="k" data-t="sDone">함께 기도한 시간</span><b id="sDone">–</b></div>
+      <div class="stat"><span class="k" id="sLeftK" data-t="sLeft">남은 시간</span><b id="sLeft">–</b></div>
+    </div>
     <p class="det" id="dToday"></p>
     <div class="yest"><span data-t="yesterday">어제</span><b id="pYest">–</b><span class="det" id="dYest"></span></div>
     <button type="button" class="more" id="resBtn" aria-expanded="false" aria-controls="resBox" data-t="resOpen">모두의 결과 보기</button>
@@ -212,6 +237,7 @@ const T = {
     tableTitle:"기록표", last14:"(최근 14일)",
     formula:"달성률 = 그날 모두가 기도한 시간의 합 ÷ 모두의 하루 목표 합. 같은 날 다시 기록하면 새 값으로 바뀝니다.",
     installLink:"휴대폰에 설치하는 방법", other:"中文",
+    sGoal:"오늘 전체 목표", sDone:"함께 기도한 시간", sLeft:"남은 시간", sOver:"목표보다 더", verseRef:"마태복음 7:7 · 馬太福音 7:7",
     resOpen:"모두의 결과 보기", resClose:"결과 닫기", resTitle:"모두의 기도", week:"최근 7일", total:"모두 합계",
     resNote:p=>p===7?"최근 7일 = 오늘 포함 7일 · 목표는 하루 목표 × 7일":"아직 기록하지 않은 친구는 0분으로 보여요.",
     goalLine:(n,g)=>`함께하는 사람 ${n}명 · 오늘 목표 ${g}`, noMembers:"아직 등록한 사람이 없어요. 아래에서 이름을 등록해 주세요!",
@@ -232,6 +258,7 @@ const T = {
     tableTitle:"紀錄表", last14:"（最近14天）",
     formula:"達成率 = 當天大家禱告時間的總和 ÷ 大家每日目標的總和。同一天再次記錄時，會改成新的數值。",
     installLink:"安裝到手機的方法", other:"한국어",
+    sGoal:"今天全體目標", sDone:"一起禱告了", sLeft:"還差", sOver:"超過目標", verseRef:"馬太福音 7:7",
     resOpen:"查看大家的結果", resClose:"收起結果", resTitle:"大家的禱告", week:"最近7天", total:"全體合計",
     resNote:p=>p===7?"最近7天 = 包含今天共7天 · 目標為每日目標 × 7天":"還沒有記錄的人會顯示為0分鐘。",
     goalLine:(n,g)=>`一起禱告 ${n} 人 · 今天目標 ${g}`, noMembers:"還沒有人登記。請在下方登記你的名字！",
@@ -285,7 +312,13 @@ function render() {
   $("pToday").textContent = loadedEntries ? tp.p + "%" : "–";
   $("ringFg").setAttribute("stroke-dashoffset", String(CIRC * (1 - Math.min(100, loadedEntries ? tp.p : 0) / 100)));
   $("cheer").textContent = loadedEntries ? t("cheer")(tp.p) : "";
-  $("dToday").textContent = loadedEntries ? fmtMin(tp.sum) + " / " + fmtMin(tp.g) : t(status.today);
+  $("dToday").textContent = loadedEntries ? "" : t(status.today);
+  $("sGoal").textContent = loadedMembers ? fmtMin(tp.g) : "–";
+  $("sDone").textContent = loadedEntries ? fmtMin(tp.sum) : "–";
+  const left = tp.g - tp.sum;
+  $("sLeftK").textContent = left < 0 ? t("sOver") : t("sLeft");
+  $("sLeft").textContent = loadedEntries && loadedMembers ? (left < 0 ? "+" + fmtMin(-left) : fmtMin(left)) : "–";
+  $("sLeft").parentElement.classList.toggle("done", loadedEntries && left <= 0 && tp.g > 0);
   $("pYest").textContent = loadedEntries ? y.p + "%" : "–";
   $("dYest").textContent = loadedEntries ? fmtMin(y.sum) + " / " + fmtMin(y.g) : "";
   $("goalLine").textContent = !loadedMembers ? t(status.members) : members.length ? t("goalLine")(members.length, fmtMin(totalGoal())) : t("noMembers");
@@ -339,6 +372,8 @@ function applyLang() {
   document.querySelectorAll("[data-t]").forEach(n => { n.textContent = t(n.dataset.t); });
   document.querySelectorAll("[data-t-aria]").forEach(n => n.setAttribute("aria-label", t(n.dataset.tAria)));
   $("rName").placeholder = t("namePh");
+  $("verseKo").hidden = lang !== "ko";
+  $("verseRef").textContent = t("verseRef");
   $("langBtn").textContent = t("other");
   $("resBtn").textContent = t($("resBox").hidden ? "resOpen" : "resClose");
   render();
