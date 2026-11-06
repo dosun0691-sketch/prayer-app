@@ -9,3 +9,7 @@ android/*.apk
 .login.log
 node_modules/
 android/*.idsig
+shots/
+iconwork/
+qr.html
+.preview-url

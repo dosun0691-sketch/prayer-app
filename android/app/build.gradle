@@ -26,13 +26,13 @@ def twaManifest = [
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
     name: '함께 기도 달성표', // The application name.
     launcherName: '기도 달성표', // The name shown on the Android Launcher.
-    themeColor: '#7A4E2D', // The color used for the status bar.
-    themeColorDark: '#1A1815', // The color used for the dark status bar.
-    navigationColor: '#7A4E2D', // The color used for the navigation bar.
-    navigationColorDark: '#1A1815', // The color used for the dark navbar.
-    navigationDividerColor: '#7A4E2D', // The navbar divider color.
-    navigationDividerColorDark: '#1A1815', // The dark navbar divider color.
-    backgroundColor: '#F5F2EC', // The color used for the splash screen background.
+    themeColor: '#FFB4A2', // The color used for the status bar.
+    themeColorDark: '#1D1B2E', // The color used for the dark status bar.
+    navigationColor: '#FFB4A2', // The color used for the navigation bar.
+    navigationColorDark: '#1D1B2E', // The color used for the dark navbar.
+    navigationDividerColor: '#FFB4A2', // The navbar divider color.
+    navigationDividerColorDark: '#1D1B2E', // The dark navbar divider color.
+    backgroundColor: '#FFF7EC', // The color used for the splash screen background.
     enableNotifications: false, // Set to true to enable notification delegation.
     // Every shortcut must include the following fields:
     // - name: String that will show up in the shortcut.
@@ -57,8 +57,8 @@ android {
         applicationId "app.web.ourfamilyprayer"
         minSdkVersion 24
         targetSdkVersion 36
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
