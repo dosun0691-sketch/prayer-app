@@ -73,6 +73,15 @@ h1{font-family:var(--display);font-weight:400;font-size:28px;margin:0;letter-spa
 }
 .more{position:relative;margin-top:14px;width:100%;font-family:var(--display);font-size:18px;background:var(--sun);color:#4a3b35;border:0;border-radius:18px;padding:12px;cursor:pointer;box-shadow:0 4px 0 #e9b43f}
 
+.btns{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.btns .more{margin-top:0;font-size:17px;padding:12px 6px}
+.more.alt{background:var(--lilac);color:#3b2d55;box-shadow:0 4px 0 #a98fd6}
+.avgcard{text-align:center}
+.avgcard .seg{justify-content:center}
+.avgbig{font-family:var(--display);font-size:64px;line-height:1;color:var(--peach-deep);font-variant-numeric:tabular-nums;margin:6px 0 10px}
+.avgbar{height:14px;max-width:320px;margin:0 auto}
+.avgbar>i{background:linear-gradient(90deg,var(--peach),var(--sun))}
+.avgline{font-family:var(--display);font-size:18px;margin:12px 0 4px}
 /* cards */
 .card{background:var(--paper);border-radius:24px;padding:18px 16px;box-shadow:0 6px 0 var(--line)}
 .card h2{font-family:var(--display);font-weight:400;font-size:21px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
@@ -177,7 +186,23 @@ button:disabled{opacity:.5}
     </div>
     <p class="det" id="dToday"></p>
     <div class="yest"><span data-t="yesterday">어제</span><b id="pYest">–</b><span class="det" id="dYest"></span></div>
-    <button type="button" class="more" id="resBtn" aria-expanded="false" aria-controls="resBox" data-t="resOpen">모두의 결과 보기</button>
+    <div class="btns">
+      <button type="button" class="more" id="avgBtn" aria-expanded="false" aria-controls="avgBox" data-t="avgOpen">전체 평균 달성률</button>
+      <button type="button" class="more alt" id="resBtn" aria-expanded="false" aria-controls="resBox" data-t="resOpen">모두의 결과 보기</button>
+    </div>
+  </section>
+
+  <section class="card avgcard" id="avgBox" hidden>
+    <h2><span class="dot" style="background:var(--sun)"><svg width="18" height="18" aria-hidden="true"><use href="#star"/></svg></span><span data-t="avgTitle">전체 회원 평균 달성률</span></h2>
+    <div class="seg" role="group" id="avgSeg">
+      <button type="button" data-p="0" class="on" data-t="today">오늘</button>
+      <button type="button" data-p="1" data-t="yesterday">어제</button>
+      <button type="button" data-p="7" data-t="week">최근 7일</button>
+    </div>
+    <div class="avgbig" id="avgPct">–</div>
+    <div class="bar avgbar"><i id="avgFill"></i></div>
+    <p class="avgline" id="avgLine"></p>
+    <p class="note" id="avgNote"></p>
   </section>
 
   <section class="card" id="resBox" hidden>
@@ -237,6 +262,9 @@ const T = {
     tableTitle:"기록표", last14:"(최근 14일)",
     formula:"달성률 = 그날 모두가 기도한 시간의 합 ÷ 모두의 하루 목표 합. 같은 날 다시 기록하면 새 값으로 바뀝니다.",
     installLink:"휴대폰에 설치하는 방법", other:"中文",
+    avgOpen:"전체 평균 달성률", avgClose:"평균 닫기", avgTitle:"전체 회원 평균 달성률",
+    avgLine:(d,n)=>`목표를 다 채운 사람 ${d}명 / 전체 ${n}명`,
+    avgNote:p=>"평균 달성률 = 회원 한 사람 한 사람의 달성률을 더해 사람 수로 나눈 값" + (p===7?" (최근 7일은 하루 목표 × 7일 기준)":"") + ". 목표를 넘긴 사람은 100%보다 크게 계산됩니다.",
     sGoal:"오늘 전체 목표", sDone:"함께 기도한 시간", sLeft:"남은 시간", sOver:"목표보다 더", verseRef:"마태복음 7:7 · 馬太福音 7:7",
     resOpen:"모두의 결과 보기", resClose:"결과 닫기", resTitle:"모두의 기도", week:"최근 7일", total:"모두 합계",
     resNote:p=>p===7?"최근 7일 = 오늘 포함 7일 · 목표는 하루 목표 × 7일":"아직 기록하지 않은 친구는 0분으로 보여요.",
@@ -258,6 +286,9 @@ const T = {
     tableTitle:"紀錄表", last14:"（最近14天）",
     formula:"達成率 = 當天大家禱告時間的總和 ÷ 大家每日目標的總和。同一天再次記錄時，會改成新的數值。",
     installLink:"安裝到手機的方法", other:"한국어",
+    avgOpen:"全體平均達成率", avgClose:"收起平均", avgTitle:"全體會員平均達成率",
+    avgLine:(d,n)=>`達成目標的人 ${d} 人 / 全體 ${n} 人`,
+    avgNote:p=>"平均達成率 = 每位會員達成率的總和 ÷ 人數" + (p===7?"（最近7天以每日目標 × 7天計算）":"") + "。超過目標的人會計算為超過100%。",
     sGoal:"今天全體目標", sDone:"一起禱告了", sLeft:"還差", sOver:"超過目標", verseRef:"馬太福音 7:7",
     resOpen:"查看大家的結果", resClose:"收起結果", resTitle:"大家的禱告", week:"最近7天", total:"全體合計",
     resNote:p=>p===7?"最近7天 = 包含今天共7天 · 目標為每日目標 × 7天":"還沒有記錄的人會顯示為0分鐘。",
@@ -328,6 +359,7 @@ function render() {
   members.forEach(m => { const o = document.createElement("option"); o.value = m.id; o.textContent = t("goalOpt")(m.name, m.goal); s.appendChild(o); });
   if (cur && members.some(m => m.id === cur)) s.value = cur; else if (mine && members.some(m => m.id === mine)) s.value = mine;
   renderResults();
+  renderAvg();
   const name = id => (members.find(m => m.id === id) || {}).name;
   const ul = $("rows"); ul.textContent = "";
   const list = entries.filter(e => name(e.member)).sort((a, b) => b.date.localeCompare(a.date) || name(a.member).localeCompare(name(b.member)));
@@ -363,8 +395,38 @@ function renderResults() {
   const tot = $("resTotal"); tot.textContent = "";
   tot.append(el("span", "", t("total") + " · " + fmtMin(sm) + " / " + fmtMin(sg)), el("span", "", (sg ? Math.round(sm / sg * 100) : 0) + "%"));
   $("resNote").textContent = t("resNote")(period);
-  document.querySelectorAll(".seg button").forEach(b => b.classList.toggle("on", +b.dataset.p === period));
+  document.querySelectorAll("#resBox .seg button").forEach(b => b.classList.toggle("on", +b.dataset.p === period));
 }
+
+// ---------- average of each member's personal achievement ----------
+let avgPeriod = 0;
+function memberRates(p) {
+  const dates = p === 7 ? Array.from({ length: 7 }, (_, i) => daysAgo(i)) : [daysAgo(p)];
+  const set = new Set(dates), span = dates.length;
+  return members.map(m => {
+    const mins = entries.filter(e => e.member === m.id && set.has(e.date)).reduce((s, e) => s + e.minutes, 0);
+    const goal = m.goal * span;
+    return goal ? mins / goal * 100 : 0;
+  });
+}
+function renderAvg() {
+  if ($("avgBox").hidden) return;
+  const rates = memberRates(avgPeriod), n = rates.length;
+  const avg = n ? Math.round(rates.reduce((s, r) => s + r, 0) / n) : 0;
+  $("avgPct").textContent = loadedEntries && loadedMembers ? avg + "%" : "–";
+  $("avgFill").style.width = Math.min(100, avg) + "%";
+  $("avgLine").textContent = n ? t("avgLine")(rates.filter(r => r >= 100).length, n) : t("noMembers");
+  $("avgNote").textContent = t("avgNote")(avgPeriod);
+  document.querySelectorAll("#avgSeg button").forEach(b => b.classList.toggle("on", +b.dataset.p === avgPeriod));
+}
+$("avgBtn").addEventListener("click", () => {
+  const open = $("avgBox").hidden;
+  $("avgBox").hidden = !open; $("avgBtn").setAttribute("aria-expanded", String(open));
+  $("avgBtn").textContent = t(open ? "avgClose" : "avgOpen");
+  renderAvg();
+  if (open) $("avgBox").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+document.querySelectorAll("#avgSeg button").forEach(b => b.addEventListener("click", () => { avgPeriod = +b.dataset.p; renderAvg(); }));
 
 function applyLang() {
   document.documentElement.lang = lang === "zh" ? "zh-Hant-TW" : "ko";
@@ -376,6 +438,7 @@ function applyLang() {
   $("verseRef").textContent = t("verseRef");
   $("langBtn").textContent = t("other");
   $("resBtn").textContent = t($("resBox").hidden ? "resOpen" : "resClose");
+  $("avgBtn").textContent = t($("avgBox").hidden ? "avgOpen" : "avgClose");
   render();
 }
 
@@ -386,7 +449,7 @@ $("resBtn").addEventListener("click", () => {
   renderResults();
   if (open) $("resBox").scrollIntoView({ behavior: "smooth", block: "start" });
 });
-document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { period = +b.dataset.p; renderResults(); }));
+document.querySelectorAll("#resBox .seg button").forEach(b => b.addEventListener("click", () => { period = +b.dataset.p; renderResults(); }));
 $("langBtn").addEventListener("click", () => { lang = lang === "ko" ? "zh" : "ko"; try { localStorage.setItem("prayer.lang", lang); } catch (e) {} applyLang(); });
 $("fDate").value = daysAgo(0);
 applyLang();
