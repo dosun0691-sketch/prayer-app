@@ -196,6 +196,7 @@ button:disabled{opacity:.5}
       </div>
     </div>
     <p class="cheer" id="cheer"></p>
+    <p class="det" id="pPeriod"></p>
     <div class="stats">
       <div class="stat"><span class="k" data-t="sGoal">전체 목표</span><b id="sGoal">–</b></div>
       <div class="stat"><span class="k" data-t="sDone">함께 기도한 시간</span><b id="sDone">–</b></div>
@@ -255,6 +256,7 @@ button:disabled{opacity:.5}
         <label><span data-t="date">날짜</span><input id="fDate" type="date" required></label>
         <label><span data-t="minutes">기도시간(분)</span><input id="fMin" type="number" min="0" max="1440" step="1" inputmode="numeric" required placeholder="60"></label>
       </div>
+      <p class="note" id="fPeriod"></p>
       <button class="main peach" id="fSave" type="submit" data-t="recBtn">기록하기</button>
       <div class="msg" id="fMsg" role="status"></div>
     </form>
@@ -284,6 +286,7 @@ const T = {
     avgOpen:"전체 평균 달성률", avgClose:"평균 닫기", avgTitle:"전체 회원 평균 달성률",
     avgLine:(d,n)=>`목표를 다 채운 사람 ${d}명 / 전체 ${n}명`,
     avgNote:p=>"평균 달성률 = 회원 한 사람 한 사람의 달성률을 더해 사람 수로 나눈 값" + (p===7?" (최근 7일은 하루 목표 × 7일 기준)":"") + ". 목표를 넘긴 사람은 100%보다 크게 계산됩니다.",
+    period:(m1,d1,m2,d2)=>`기도 시간: ${m1}/${d1} 오후 6시 ~ ${m2}/${d2} 오전 10시`,
     sGoal:"오늘 전체 목표", sDone:"함께 기도한 시간", sLeft:"남은 시간", sOver:"목표보다 더", verseRef:"마태복음 7:7 · 馬太福音 7:7",
     resOpen:"모두의 결과 보기", resClose:"결과 닫기", resTitle:"모두의 기도", week:"최근 7일", total:"모두 합계",
     resNote:p=>p===7?"최근 7일 = 오늘 포함 7일 · 목표는 하루 목표 × 7일":"아직 기록하지 않은 친구는 0분으로 보여요.",
@@ -310,6 +313,7 @@ const T = {
     avgOpen:"全體平均達成率", avgClose:"收起平均", avgTitle:"全體會員平均達成率",
     avgLine:(d,n)=>`達成目標的人 ${d} 人 / 全體 ${n} 人`,
     avgNote:p=>"平均達成率 = 每位會員達成率的總和 ÷ 人數" + (p===7?"（最近7天以每日目標 × 7天計算）":"") + "。超過目標的人會計算為超過100%。",
+    period:(m1,d1,m2,d2)=>`禱告時間：${m1}/${d1} 下午6點 ～ ${m2}/${d2} 上午10點`,
     sGoal:"今天全體目標", sDone:"一起禱告了", sLeft:"還差", sOver:"超過目標", verseRef:"馬太福音 7:7",
     resOpen:"查看大家的結果", resClose:"收起結果", resTitle:"大家的禱告", week:"最近7天", total:"全體合計",
     resNote:p=>p===7?"最近7天 = 包含今天共7天 · 目標為每日目標 × 7天":"還沒有記錄的人會顯示為0分鐘。",
@@ -344,7 +348,15 @@ const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) 
 const newId = () => Array.from(crypto.getRandomValues(new Uint8Array(12)), b => "abcdefghijklmnopqrstuvwxyz0123456789"[b % 36]).join("");
 const pad = n => String(n).padStart(2, "0");
 const dstr = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
-const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return dstr(d); };
+// 기도 하루 = 시작일 오후 6시 ~ 다음날 오전 10시. 날짜 경계를 오후 6시로 둔다
+// (오후 6시 전에는 아직 전날 시작한 기도 기간으로 계산).
+const DAY_START_H = 18, DAY_END_H = 10;
+const daysAgo = n => { const d = new Date(Date.now() - DAY_START_H * 3600000); d.setDate(d.getDate() - n); return dstr(d); };
+const periodText = ds => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(ds || "")) return "";
+  const [y, mo, da] = ds.split("-").map(Number), e = new Date(y, mo - 1, da + 1);
+  return t("period")(mo, da, e.getMonth() + 1, e.getDate());
+};
 const fmtMin = m => { m = +m || 0; const h = Math.floor(m / 60), r = m % 60; return h ? h + t("h") + (r ? " " + r + t("m") : "") : r + t("m"); };
 const COLORS = ["#ffb4a2", "#ffd166", "#a8d8f0", "#b8e6c8", "#d7c4f0", "#ffc9de"];
 const colorFor = s => COLORS[[...s].reduce((a, c) => a + c.codePointAt(0), 0) % COLORS.length];
@@ -371,6 +383,8 @@ function render() {
   $("sLeftK").textContent = left < 0 ? t("sOver") : t("sLeft");
   $("sLeft").textContent = loadedEntries && loadedMembers ? (left < 0 ? "+" + fmtMin(-left) : fmtMin(left)) : "–";
   $("sLeft").parentElement.classList.toggle("done", loadedEntries && left <= 0 && tp.g > 0);
+  $("pPeriod").textContent = periodText(daysAgo(0));
+  $("fPeriod").textContent = periodText($("fDate").value);
   $("pYest").textContent = loadedEntries ? y.p + "%" : "–";
   $("dYest").textContent = loadedEntries ? fmtMin(y.sum) + " / " + fmtMin(y.g) : "";
   $("goalLine").textContent = !loadedMembers ? t(status.members) : members.length ? t("goalLine")(members.length, fmtMin(totalGoal())) : t("noMembers");
@@ -482,6 +496,7 @@ $("langBtn").addEventListener("click", () => { lang = lang === "ko" ? "zh" : "ko
   $("iosClose").addEventListener("click", () => { $("iosTip").hidden = true; try { localStorage.setItem("prayer.iosTip", "off"); } catch (e) {} });
 })();
 $("fDate").value = daysAgo(0);
+$("fDate").addEventListener("change", () => { $("fPeriod").textContent = periodText($("fDate").value); });
 applyLang();
 
 const timer = setTimeout(() => { status.today = "netSlow"; render(); }, 10000);
