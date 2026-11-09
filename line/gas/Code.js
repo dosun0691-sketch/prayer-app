@@ -2,7 +2,7 @@
  * 阿坤 — LINE 단톡방에서 누가 「結果」(또는 결과/结果)라고 치면 기도 달성표 결과를 답한다.
  * 답장(reply) 메시지는 LINE 무료 — 매일 자동 발송은 하지 않는다.
  * 기도 하루 = 시작일 오후 6시 ~ 다음날 오전 10시 (앱과 같은 규칙, 대만 시간).
- * 스크립트 속성 LINE_TOKEN 에 채널 액세스 토큰을 넣는다.
+ * 阿坤 채널 ID·시크릿은 Secrets.js(git 제외)의 SECRETS 에 둔다.
  */
 var PROJECT = "ourfamily-prayer-11060015";
 var APP_URL = "https://ourfamily-prayer-11060015.web.app/";
@@ -24,10 +24,19 @@ function doPost(e) {
 
 function doGet() { return ContentService.createTextOutput("阿坤 ok"); }
 
+// 채널 ID·시크릿으로 15분짜리 토큰을 그때그때 받는다 (만료 걱정 없음)
+function accessToken_() {
+  // SECRETS 는 git 에 올리지 않는 Secrets.js 에 있다
+  var r = UrlFetchApp.fetch("https://api.line.me/oauth2/v3/token", {
+    method: "post", payload: { grant_type: "client_credentials", client_id: SECRETS.CHANNEL_ID, client_secret: SECRETS.CHANNEL_SECRET }
+  });
+  return JSON.parse(r.getContentText()).access_token;
+}
+
 function reply_(token, text) {
   UrlFetchApp.fetch("https://api.line.me/v2/bot/message/reply", {
     method: "post", contentType: "application/json", muteHttpExceptions: true,
-    headers: { Authorization: "Bearer " + PropertiesService.getScriptProperties().getProperty("LINE_TOKEN") },
+    headers: { Authorization: "Bearer " + accessToken_() },
     payload: JSON.stringify({ replyToken: token, messages: [{ type: "text", text: text.slice(0, 5000) }] })
   });
 }
