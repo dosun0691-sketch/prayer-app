@@ -1,0 +1,17 @@
+name: 阿坤 daily prayer report
+on:
+  schedule:
+    - cron: "0 2 * * *"   # 매일 02:00 UTC = 대만 오전 10:00 (GitHub 사정으로 몇 분 늦을 수 있음)
+  workflow_dispatch: {}
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python line/line_report.py
+        env:
+          LINE_TOKEN: ${{ secrets.LINE_TOKEN }}
+          LINE_GROUP: ${{ secrets.LINE_GROUP }}
