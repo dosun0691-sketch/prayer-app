@@ -48,7 +48,9 @@ function members_() {
   do {
     var d = JSON.parse(UrlFetchApp.fetch(FS + "/members?pageSize=300" + (tok ? "&pageToken=" + tok : "")).getContentText());
     (d.documents || []).forEach(function (doc) {
-      out.push({ id: doc.name.split("/").pop(), name: String(val_(doc.fields.name)), goal: +val_(doc.fields.goal) || 0 });
+      var f = doc.fields;
+      out.push({ id: doc.name.split("/").pop(), name: String(val_(f.name)), goal: +val_(f.goal) || 0,
+        goalSat: f.goalSat ? +val_(f.goalSat) || 0 : 0, goalSun: f.goalSun ? +val_(f.goalSun) || 0 : 0 });
     });
     tok = d.nextPageToken || "";
   } while (tok);
@@ -73,7 +75,9 @@ function report_(now) {
   var day = Utilities.formatString("%04d-%02d-%02d", y, mo + 1, da);
   var end = new Date(Date.UTC(y, mo, da + 1));
   var ms = members_(), es = entries_(day);
-  var rows = ms.map(function (m) { return { n: m.name, mins: es[m.id] || 0, g: m.goal }; })
+  // 요일별 목표 (기도 하루의 시작 날짜 기준: 토 → goalSat, 일 → goalSun, 그 밖 → goal)
+  var w = new Date(Date.UTC(y, mo, da)).getUTCDay();
+  var rows = ms.map(function (m) { return { n: m.name, mins: es[m.id] || 0, g: (w === 6 ? m.goalSat : w === 0 ? m.goalSun : 0) || m.goal }; })
     .sort(function (a, b) { return (b.g ? b.mins / b.g : 0) - (a.g ? a.mins / a.g : 0) || (a.n < b.n ? -1 : 1); });
   var tm = 0, tg = 0, done = 0;
   rows.forEach(function (r) { tm += r.mins; tg += r.g; if (r.g && r.mins >= r.g) done++; });

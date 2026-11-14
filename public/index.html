@@ -48,8 +48,8 @@ h1{font-family:var(--display);font-weight:400;font-size:28px;margin:0;letter-spa
 .verse figcaption{margin-top:6px;font-family:var(--display);font-size:15px;color:var(--peach-deep);text-align:right}
 .stats{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
 .stat{background:var(--bg);border-radius:16px;padding:8px 4px;display:grid;gap:2px}
-.stat .k{font-size:12px;color:var(--soft)}
-.stat b{font-family:var(--display);font-weight:400;font-size:17px;font-variant-numeric:tabular-nums}
+.stat .k{font-size:14px;color:var(--ink);font-weight:700}
+.stat b{font-family:var(--display);font-weight:400;font-size:20px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .stat.done b{color:var(--mint-deep)}
 /* hero */
 .hero{position:relative;background:var(--paper);border-radius:28px;padding:18px 16px 16px;box-shadow:0 6px 0 var(--line);text-align:center;overflow:hidden}
@@ -58,12 +58,12 @@ h1{font-family:var(--display);font-weight:400;font-size:28px;margin:0;letter-spa
 .ring svg{width:100%;height:100%;display:block}
 .ring .center{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:0}
 .hands{width:46%;height:auto}
-.big{font-family:var(--display);font-size:40px;line-height:1;margin-top:2px;font-variant-numeric:tabular-nums}
+.big{font-family:var(--display);font-size:54px;color:var(--peach-deep);line-height:1;margin-top:2px;font-variant-numeric:tabular-nums}
 .lbl{font-family:var(--display);font-size:15px;color:var(--peach-deep)}
-.cheer{position:relative;font-family:var(--display);font-size:20px;margin:10px 0 2px}
+.cheer{position:relative;font-family:var(--display);font-size:24px;color:var(--peach-deep);margin:10px 0 2px}
 .det{position:relative;font-size:14px;color:var(--soft)}
-.yest{position:relative;display:inline-flex;gap:8px;align-items:center;margin-top:10px;background:var(--bg);border-radius:99px;padding:5px 14px;font-size:14px}
-.yest b{font-family:var(--display);font-weight:400;font-size:18px}
+.yest{position:relative;display:inline-flex;gap:8px;align-items:center;margin-top:10px;background:var(--bg);border-radius:99px;padding:6px 16px;font-size:17px;font-weight:700}
+.yest b{font-family:var(--display);font-weight:400;font-size:24px;color:var(--peach-deep)}
 .sparkle{position:absolute;width:22px;height:22px}
 @media (prefers-reduced-motion:no-preference){
   .sparkle{animation:twinkle 2.4s ease-in-out infinite}
@@ -82,10 +82,10 @@ h1{font-family:var(--display);font-weight:400;font-size:28px;margin:0;letter-spa
 .more.alt{background:var(--lilac);color:#3b2d55;box-shadow:0 4px 0 #a98fd6}
 .avgcard{text-align:center}
 .avgcard .seg{justify-content:center}
-.avgbig{font-family:var(--display);font-size:64px;line-height:1;color:var(--peach-deep);font-variant-numeric:tabular-nums;margin:6px 0 10px}
+.avgbig{font-family:var(--display);font-size:84px;line-height:1;color:var(--peach-deep);font-variant-numeric:tabular-nums;margin:6px 0 10px}
 .avgbar{height:14px;max-width:320px;margin:0 auto}
 .avgbar>i{background:linear-gradient(90deg,var(--peach),var(--sun))}
-.avgline{font-family:var(--display);font-size:18px;margin:12px 0 4px}
+.avgline{font-family:var(--display);font-size:22px;margin:12px 0 4px}
 /* cards */
 .card{background:var(--paper);border-radius:24px;padding:18px 16px;box-shadow:0 6px 0 var(--line)}
 .card h2{font-family:var(--display);font-weight:400;font-size:21px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
@@ -114,21 +114,27 @@ button:disabled{opacity:.5}
 .seg button{font-family:var(--display);font-size:16px;background:var(--bg);color:var(--soft);border:2px solid var(--line);border-radius:99px;padding:4px 14px;cursor:pointer}
 .seg button.on{background:var(--lilac);color:#3b2d55;border-color:var(--lilac)}
 .people{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.person{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;background:var(--bg);border-radius:18px;padding:10px 12px}
-.ava{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:18px;color:#4a3b35}
-.pname{font-family:var(--display);font-size:17px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
-.pmeta{font-size:13px;color:var(--soft)}
-.bar{height:10px;border-radius:99px;background:var(--ring-bg);overflow:hidden;margin-top:5px}
+.person{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;background:var(--bg);border-radius:18px;padding:12px 14px;border:2px solid var(--line)}
+.person.full{border-color:var(--mint)}
+.ava{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:22px;color:#4a3b35}
+.pname{font-family:var(--display);font-size:23px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+.pmeta{font-size:17px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.bar{height:14px;border-radius:99px;background:var(--ring-bg);overflow:hidden;margin-top:5px}
 .bar>i{display:block;height:100%;border-radius:99px;background:var(--peach);width:0}
-.pct{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums;text-align:right}
-.star{display:inline-block;width:18px;height:18px;vertical-align:-3px}
-.total{display:flex;justify-content:space-between;font-family:var(--display);font-size:17px;margin-top:12px;padding:0 4px}
+.pct{font-family:var(--display);font-size:32px;color:var(--peach-deep);font-variant-numeric:tabular-nums;text-align:right}
+.star{display:inline-block;width:24px;height:24px;vertical-align:-3px}
+.total{display:flex;justify-content:space-between;align-items:center;font-family:var(--display);font-size:22px;margin-top:14px;padding:10px 14px;background:var(--sun);color:#4a3b35;border-radius:16px}
+.total span:last-child{font-size:30px}
+.pct.full{color:var(--mint-deep)}
+.goals3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.goals3 label span{font-weight:700;color:var(--ink);font-size:15px}
+.relink{background:none;border:0;color:var(--peach-deep);font:inherit;font-size:15px;text-decoration:underline;cursor:pointer;padding:0;justify-self:start}
 .empty{color:var(--soft);font-size:14px;text-align:center;padding:10px}
 .log{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.log li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border-bottom:2px dashed var(--line);padding:6px 2px;font-size:15px}
+.log li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border-bottom:2px dashed var(--line);padding:8px 2px;font-size:17px;font-weight:700}
 .log .d{color:var(--soft);font-size:13px}
-.log .m{font-family:var(--display);font-size:16px}
-.chip{font-family:var(--display);font-size:14px;padding:1px 10px;border-radius:99px;background:var(--ring-bg);color:var(--peach-deep)}
+.log .m{font-family:var(--display);font-size:20px}
+.chip{font-family:var(--display);font-size:18px;padding:1px 10px;border-radius:99px;background:var(--ring-bg);color:var(--peach-deep)}
 .chip.full{background:var(--mint);color:#24563a}
 </style>
 </head>
@@ -236,11 +242,16 @@ button:disabled{opacity:.5}
   </section>
 
   <section class="card" id="regBox">
-    <h2><span class="dot" style="background:var(--mint)"><svg width="18" height="18" aria-hidden="true"><use href="#heart"/></svg></span><span data-t="regTitle">처음 오셨나요? 내 이름 등록</span></h2>
+    <h2><span class="dot" style="background:var(--mint)"><svg width="18" height="18" aria-hidden="true"><use href="#heart"/></svg></span><span id="regTitleTxt">처음 오셨나요? 내 이름 등록</span></h2>
     <form id="r">
       <div class="fields">
         <label class="full"><span data-t="name">이름</span><input id="rName" maxlength="20" required></label>
-        <label><span data-t="goalMin">하루 목표(분)</span><input id="rGoal" type="number" min="10" max="600" step="5" inputmode="numeric" value="60" required></label>
+      </div>
+      <p class="note" data-t="goalHelp" style="font-size:15px;color:var(--ink)">요일마다 기도 시간이 다르니 세 가지를 모두 적어 주세요 (분)</p>
+      <div class="goals3">
+        <label><span data-t="goalWk">① 월~금</span><input id="rGoal" type="number" min="10" max="600" step="5" inputmode="numeric" value="60" required></label>
+        <label><span data-t="goalSat">② 토요일</span><input id="rSat" type="number" min="10" max="600" step="5" inputmode="numeric" value="60" required></label>
+        <label><span data-t="goalSun">③ 주일(일)</span><input id="rSun" type="number" min="10" max="600" step="5" inputmode="numeric" value="60" required></label>
       </div>
       <button class="main mint" id="rSave" type="submit" data-t="regBtn">등록하기</button>
       <div class="msg" id="rMsg" role="status"></div>
@@ -258,6 +269,8 @@ button:disabled{opacity:.5}
       </div>
       <p class="note" id="fPeriod"></p>
       <button class="main peach" id="fSave" type="submit" data-t="recBtn">기록하기</button>
+      <p class="note" id="myGoals" style="font-size:15px;color:var(--ink)"></p>
+      <button type="button" class="relink" id="resetBtn" data-t="resetBtn">내 목표 시간 다시 설정하기</button>
       <div class="msg" id="fMsg" role="status"></div>
     </form>
   </section>
@@ -276,7 +289,12 @@ import { getFirestore, doc, collection, query, where, onSnapshot, setDoc } from 
 const T = {
   ko: { title:"함께 기도 달성표", today:"오늘", yesterday:"어제", pctAria:"전체 목표 달성률",
     regTitle:"처음 오셨나요? 내 이름 등록", name:"이름", goalMin:"하루 목표(분)", regBtn:"등록하기",
-    regNote:"한 번만 등록하면 됩니다. 이름이 틀렸거나 지워야 하면 목사님께 말씀해 주세요.", namePh:"예: 김은혜",
+    goalHelp:"요일마다 기도 시간이 다르니 세 가지를 모두 적어 주세요 (분)", goalWk:"① 월~금", goalSat:"② 토요일", goalSun:"③ 주일(일)",
+    resetBtn:"내 목표 시간 다시 설정하기", regTitleReset:"내 목표 시간 다시 설정",
+    myGoals:(a,b,c)=>`내 목표 · 월~금 ${a} · 토 ${b} · 주일 ${c}`,
+    regReset:n=>`${n}님의 목표 시간을 새로 저장했어요. 지난 기록은 그대로 남아 있어요.`,
+    setNeeded:"요일별(월~금·토·주일) 목표 시간을 새로 정해 주세요!",
+    regNote:"앱을 지우고 다시 깔았을 때도 같은 이름으로 다시 등록하면 목표 시간을 새로 정할 수 있어요(지난 기록은 그대로). 이름을 지워야 하면 목사님께 말씀해 주세요.", namePh:"예: 김은혜",
     recTitle:"기도 시간 기록", date:"날짜", minutes:"기도시간(분)", recBtn:"기도했어요! 기록하기",
     tableTitle:"기록표", last14:"(최근 14일)",
     formula:"달성률 = 그날 모두가 기도한 시간의 합 ÷ 모두의 하루 목표 합. 같은 날 다시 기록하면 새 값으로 바뀝니다.",
@@ -285,25 +303,30 @@ const T = {
     iosNote:"카카오톡·LINE 안에서 열렸다면, 먼저 메뉴에서 ‘Safari로 열기’를 누르세요.", iosClose:"알겠어요",
     avgOpen:"전체 평균 달성률", avgClose:"평균 닫기", avgTitle:"전체 회원 평균 달성률",
     avgLine:(d,n)=>`목표를 다 채운 사람 ${d}명 / 전체 ${n}명`,
-    avgNote:p=>"평균 달성률 = 회원 한 사람 한 사람의 달성률을 더해 사람 수로 나눈 값" + (p===7?" (최근 7일은 하루 목표 × 7일 기준)":"") + ". 목표를 넘긴 사람은 100%보다 크게 계산됩니다.",
+    avgNote:p=>"평균 달성률 = 회원 한 사람 한 사람의 달성률을 더해 사람 수로 나눈 값" + (p===7?" (최근 7일은 요일별 목표를 더한 값 기준)":"") + ". 목표를 넘긴 사람은 100%보다 크게 계산됩니다.",
     period:(m1,d1,m2,d2)=>`기도 시간: ${m1}/${d1} 오후 6시 ~ ${m2}/${d2} 오전 10시`,
     sGoal:"오늘 전체 목표", sDone:"함께 기도한 시간", sLeft:"남은 시간", sOver:"목표보다 더", verseRef:"마태복음 7:7 · 馬太福音 7:7",
     resOpen:"모두의 결과 보기", resClose:"결과 닫기", resTitle:"모두의 기도", week:"최근 7일", total:"모두 합계",
-    resNote:p=>p===7?"최근 7일 = 오늘 포함 7일 · 목표는 하루 목표 × 7일":"아직 기록하지 않은 친구는 0분으로 보여요.",
+    resNote:p=>p===7?"최근 7일 = 오늘 포함 7일 · 목표는 요일별 목표의 합":"아직 기록하지 않은 친구는 0분으로 보여요.",
     goalLine:(n,g)=>`함께하는 사람 ${n}명 · 오늘 목표 ${g}`, noMembers:"아직 등록한 사람이 없어요. 아래에서 이름을 등록해 주세요!",
     loadingMembers:"명단을 불러오는 중…", loading:"기록을 불러오는 중…", netSlow:"인터넷 연결을 확인해 주세요.",
     loadFail:"기록을 불러오지 못했어요.", membersFail:"명단을 불러오지 못했어요.",
     empty:"아직 기록이 없어요. 첫 기도를 기록해 볼까요?",
-    goalOpt:(n,g)=>`${n} (목표 ${g}분)`, h:"시간", m:"분",
+    goalOpt:(n,g)=>`${n} (오늘 목표 ${g}분)`, h:"시간", m:"분",
     cheer:p=>p>=100?"목표 달성! 하나님께 감사해요":p>=70?"거의 다 왔어요! 조금만 더":p>=30?"잘하고 있어요! 함께 힘내요":p>0?"기도가 시작됐어요!":"오늘도 함께 기도해요",
     recBad:"이름, 날짜, 기도시간(0~1440분)을 확인해 주세요.", recOk:(n,d,t)=>`${n} · ${d} · ${t} 기록했어요. 잘했어요!`,
     recFail:"저장하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.",
-    regBadName:"이름을 1~20자로 적어 주세요.", regBadGoal:"하루 목표는 10분에서 600분 사이로 적어 주세요.",
+    regBadName:"이름을 1~20자로 적어 주세요.", regBadGoal:"목표 시간은 세 칸 모두 10분에서 600분 사이로 적어 주세요.",
     regDup:n=>`‘${n}’ 이름이 이미 있어요. 본인이면 아래에서 이름을 고르세요. 다른 사람이면 이름 뒤에 구분(예: 김은혜B)을 붙여 주세요.`,
     regOk:n=>`${n}님, 반가워요! 이제 아래에서 기도 시간을 기록하세요.`, regFail:"등록하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요." },
   zh: { title:"一起禱告達成表", today:"今天", yesterday:"昨天", pctAria:"全體目標達成率",
     regTitle:"第一次使用嗎？登記我的名字", name:"姓名", goalMin:"每日目標（分鐘）", regBtn:"登記",
-    regNote:"只需要登記一次。名字寫錯或需要刪除時，請告訴牧師。", namePh:"例如：王小明",
+    goalHelp:"每天禱告時間不同，請三項都填寫（分鐘）", goalWk:"① 週一～週五", goalSat:"② 週六", goalSun:"③ 主日（週日）",
+    resetBtn:"重新設定我的目標時間", regTitleReset:"重新設定我的目標時間",
+    myGoals:(a,b,c)=>`我的目標 · 週一～五 ${a} · 週六 ${b} · 主日 ${c}`,
+    regReset:n=>`${n}的目標時間已重新儲存。之前的紀錄都還保留著。`,
+    setNeeded:"請重新設定週一～五、週六、主日的目標時間！",
+    regNote:"刪除App重新安裝後，用同樣的名字再登記一次，就可以重新設定目標時間（之前的紀錄保留）。需要刪除名字時，請告訴牧師。", namePh:"例如：王小明",
     recTitle:"記錄禱告時間", date:"日期", minutes:"禱告時間（分鐘）", recBtn:"我禱告了！記錄",
     tableTitle:"紀錄表", last14:"（最近14天）",
     formula:"達成率 = 當天大家禱告時間的總和 ÷ 大家每日目標的總和。同一天再次記錄時，會改成新的數值。",
@@ -312,20 +335,20 @@ const T = {
     iosNote:"如果是在 LINE 或 KakaoTalk 裡打開，請先從選單選「用 Safari 開啟」。", iosClose:"知道了",
     avgOpen:"全體平均達成率", avgClose:"收起平均", avgTitle:"全體會員平均達成率",
     avgLine:(d,n)=>`達成目標的人 ${d} 人 / 全體 ${n} 人`,
-    avgNote:p=>"平均達成率 = 每位會員達成率的總和 ÷ 人數" + (p===7?"（最近7天以每日目標 × 7天計算）":"") + "。超過目標的人會計算為超過100%。",
+    avgNote:p=>"平均達成率 = 每位會員達成率的總和 ÷ 人數" + (p===7?"（最近7天以每天的目標相加計算）":"") + "。超過目標的人會計算為超過100%。",
     period:(m1,d1,m2,d2)=>`禱告時間：${m1}/${d1} 下午6點 ～ ${m2}/${d2} 上午10點`,
     sGoal:"今天全體目標", sDone:"一起禱告了", sLeft:"還差", sOver:"超過目標", verseRef:"馬太福音 7:7",
     resOpen:"查看大家的結果", resClose:"收起結果", resTitle:"大家的禱告", week:"最近7天", total:"全體合計",
-    resNote:p=>p===7?"最近7天 = 包含今天共7天 · 目標為每日目標 × 7天":"還沒有記錄的人會顯示為0分鐘。",
+    resNote:p=>p===7?"最近7天 = 包含今天共7天 · 目標為每天目標的總和":"還沒有記錄的人會顯示為0分鐘。",
     goalLine:(n,g)=>`一起禱告 ${n} 人 · 今天目標 ${g}`, noMembers:"還沒有人登記。請在下方登記你的名字！",
     loadingMembers:"正在讀取名單…", loading:"正在讀取紀錄…", netSlow:"請確認網路連線。",
     loadFail:"無法讀取紀錄。", membersFail:"無法讀取名單。",
     empty:"還沒有紀錄。來記錄第一次禱告吧！",
-    goalOpt:(n,g)=>`${n}（目標 ${g} 分鐘）`, h:"小時", m:"分鐘",
+    goalOpt:(n,g)=>`${n}（今天目標 ${g} 分鐘）`, h:"小時", m:"分鐘",
     cheer:p=>p>=100?"達成目標！感謝上帝":p>=70?"快要達成了！再加油一點":p>=30?"做得很好！一起加油":p>0?"禱告開始了！":"今天也一起禱告吧",
     recBad:"請確認姓名、日期、禱告時間（0～1440分鐘）。", recOk:(n,d,t)=>`${n} · ${d} · ${t} 已記錄。做得好！`,
     recFail:"儲存失敗。請確認網路連線後再按一次。",
-    regBadName:"請輸入1～20個字的名字。", regBadGoal:"每日目標請輸入10到600分鐘。",
+    regBadName:"請輸入1～20個字的名字。", regBadGoal:"三個目標時間都請輸入10到600分鐘。",
     regDup:n=>`「${n}」已經有人登記。如果是你本人，請在下方選擇名字；如果是別人，請在名字後面加上區別（例如：王小明B）。`,
     regOk:n=>`${n}，歡迎你！現在可以在下方記錄禱告時間。`, regFail:"登記失敗。請確認網路連線後再按一次。" }
 };
@@ -361,11 +384,14 @@ const fmtMin = m => { m = +m || 0; const h = Math.floor(m / 60), r = m % 60; ret
 const COLORS = ["#ffb4a2", "#ffd166", "#a8d8f0", "#b8e6c8", "#d7c4f0", "#ffc9de"];
 const colorFor = s => COLORS[[...s].reduce((a, c) => a + c.codePointAt(0), 0) % COLORS.length];
 const CIRC = 590.6;
-let members = [], entries = [], loadedMembers = false, loadedEntries = false, period = 0;
+let members = [], entries = [], loadedMembers = false, loadedEntries = false, period = 0, resetMode = false;
 
-const totalGoal = () => members.reduce((s, m) => s + (+m.goal || 0), 0);
+// 요일별 목표: 기도 하루의 시작 날짜 기준 (토 → goalSat, 일 → goalSun, 그 밖 → goal). 예전 회원은 goal 하나로 대신한다.
+const dow = ds => { const [y, mo, da] = ds.split("-").map(Number); return new Date(y, mo - 1, da).getDay(); };
+const goalFor = (m, ds) => { const w = dow(ds); return (w === 6 ? m.goalSat : w === 0 ? m.goalSun : 0) || m.goal || 0; };
+const totalGoal = ds => members.reduce((s, m) => s + goalFor(m, ds), 0);
 function pctFor(date) {
-  const g = totalGoal(), keep = new Set(members.map(m => m.id));
+  const g = totalGoal(date), keep = new Set(members.map(m => m.id));
   const sum = entries.filter(e => e.date === date && keep.has(e.member)).reduce((s, e) => s + e.minutes, 0);
   return { sum, g, p: g ? Math.round(sum / g * 100) : 0 };
 }
@@ -387,11 +413,17 @@ function render() {
   $("fPeriod").textContent = periodText($("fDate").value);
   $("pYest").textContent = loadedEntries ? y.p + "%" : "–";
   $("dYest").textContent = loadedEntries ? fmtMin(y.sum) + " / " + fmtMin(y.g) : "";
-  $("goalLine").textContent = !loadedMembers ? t(status.members) : members.length ? t("goalLine")(members.length, fmtMin(totalGoal())) : t("noMembers");
+  $("goalLine").textContent = !loadedMembers ? t(status.members) : members.length ? t("goalLine")(members.length, fmtMin(totalGoal(daysAgo(0)))) : t("noMembers");
   let mine = null; try { mine = localStorage.getItem("prayer.member"); } catch (e) {}
-  $("regBox").hidden = !!(mine && members.some(m => m.id === mine));
+  const me = members.find(m => m.id === mine);
+  $("regBox").hidden = !!(me && me.goalSat && me.goalSun) && !resetMode;
+  $("regTitleTxt").textContent = t(me || resetMode ? "regTitleReset" : "regTitle");
+  if (me && !(me.goalSat && me.goalSun) && !$("rMsg").textContent) say("rMsg", t("setNeeded"), "err");
+  if (me && !$("regBox").hidden && !$("rName").value) { $("rName").value = me.name; $("rGoal").value = me.goal; $("rSat").value = me.goalSat || me.goal; $("rSun").value = me.goalSun || me.goal; }
+  $("myGoals").textContent = me ? t("myGoals")(fmtMin(me.goal), fmtMin(me.goalSat || me.goal), fmtMin(me.goalSun || me.goal)) : "";
+  $("resetBtn").hidden = !me || !$("regBox").hidden;
   const s = $("fName"), cur = s.value; s.textContent = "";
-  members.forEach(m => { const o = document.createElement("option"); o.value = m.id; o.textContent = t("goalOpt")(m.name, m.goal); s.appendChild(o); });
+  members.forEach(m => { const o = document.createElement("option"); o.value = m.id; o.textContent = t("goalOpt")(m.name, goalFor(m, daysAgo(0))); s.appendChild(o); });
   if (cur && members.some(m => m.id === cur)) s.value = cur; else if (mine && members.some(m => m.id === mine)) s.value = mine;
   renderResults();
   renderAvg();
@@ -413,18 +445,18 @@ function renderResults() {
   const set = new Set(dates), span = dates.length;
   const rows = members.map(m => {
     const mins = entries.filter(e => e.member === m.id && set.has(e.date)).reduce((s, e) => s + e.minutes, 0);
-    const goal = m.goal * span;
+    const goal = dates.reduce((s, d) => s + goalFor(m, d), 0);
     return { name: m.name, mins, goal, p: goal ? Math.round(mins / goal * 100) : 0 };
   }).sort((a, b) => b.p - a.p || a.name.localeCompare(b.name));
   const ul = $("resRows"); ul.textContent = "";
   if (!rows.length) ul.appendChild(el("li", "empty", t("noMembers")));
   rows.forEach(r => {
-    const li = el("li", "person");
+    const li = el("li", "person" + (r.p >= 100 ? " full" : ""));
     const ava = el("div", "ava", [...r.name][0] || "?"); ava.style.background = colorFor(r.name);
     const mid = el("div"); const nm = el("div", "pname", r.name); if (r.p >= 100) { nm.append(" "); nm.appendChild(starEl()); }
     const bar = el("div", "bar"); const fill = el("i"); fill.style.width = Math.min(100, r.p) + "%"; if (r.p >= 100) fill.style.background = "var(--mint)"; bar.appendChild(fill);
     mid.append(nm, el("div", "pmeta", fmtMin(r.mins) + " / " + fmtMin(r.goal)), bar);
-    li.append(ava, mid, el("div", "pct", r.p + "%")); ul.appendChild(li);
+    li.append(ava, mid, el("div", "pct" + (r.p >= 100 ? " full" : ""), r.p + "%")); ul.appendChild(li);
   });
   const sm = rows.reduce((s, r) => s + r.mins, 0), sg = rows.reduce((s, r) => s + r.goal, 0);
   const tot = $("resTotal"); tot.textContent = "";
@@ -440,7 +472,7 @@ function memberRates(p) {
   const set = new Set(dates), span = dates.length;
   return members.map(m => {
     const mins = entries.filter(e => e.member === m.id && set.has(e.date)).reduce((s, e) => s + e.minutes, 0);
-    const goal = m.goal * span;
+    const goal = dates.reduce((s, d) => s + goalFor(m, d), 0);
     return goal ? mins / goal * 100 : 0;
   });
 }
@@ -495,6 +527,10 @@ $("langBtn").addEventListener("click", () => { lang = lang === "ko" ? "zh" : "ko
   $("iosTip").hidden = !(isIOS && !standalone && !dismissed);
   $("iosClose").addEventListener("click", () => { $("iosTip").hidden = true; try { localStorage.setItem("prayer.iosTip", "off"); } catch (e) {} });
 })();
+$("resetBtn").addEventListener("click", () => {
+  resetMode = true; $("rName").value = ""; $("rMsg").textContent = ""; render();
+  $("regBox").scrollIntoView({ behavior: "smooth", block: "start" });
+});
 $("fDate").value = daysAgo(0);
 $("fDate").addEventListener("change", () => { $("fPeriod").textContent = periodText($("fDate").value); });
 applyLang();
@@ -502,7 +538,7 @@ applyLang();
 const timer = setTimeout(() => { status.today = "netSlow"; render(); }, 10000);
 onSnapshot(collection(db, "members"), s => {
   loadedMembers = true;
-  members = s.docs.map(d => ({ id: d.id, name: String(d.data().name), goal: +d.data().goal || 0 })).sort((a, b) => a.name.localeCompare(b.name));
+  members = s.docs.map(d => ({ id: d.id, name: String(d.data().name), goal: +d.data().goal || 0, goalSat: +d.data().goalSat || 0, goalSun: +d.data().goalSun || 0 })).sort((a, b) => a.name.localeCompare(b.name));
   render();
 }, () => { status.members = "membersFail"; render(); });
 onSnapshot(query(collection(db, "entries"), where("date", ">=", daysAgo(13))), s => {
@@ -514,16 +550,19 @@ onSnapshot(query(collection(db, "entries"), where("date", ">=", daysAgo(13))), s
 const say = (id, txt, cls) => { const n = $(id); n.textContent = txt; n.className = "msg" + (cls ? " " + cls : ""); };
 $("r").addEventListener("submit", async ev => {
   ev.preventDefault();
-  const name = $("rName").value.trim().replace(/\s+/g, " "), goal = Math.round(+$("rGoal").value);
+  const name = $("rName").value.trim().replace(/\s+/g, " ");
+  const goal = Math.round(+$("rGoal").value), goalSat = Math.round(+$("rSat").value), goalSun = Math.round(+$("rSun").value);
   if (!name || name.length > 20) { say("rMsg", t("regBadName"), "err"); return; }
-  if (!(goal >= 10 && goal <= 600)) { say("rMsg", t("regBadGoal"), "err"); return; }
-  if (members.some(m => m.name === name)) { say("rMsg", t("regDup")(name), "err"); return; }
+  if (![goal, goalSat, goalSun].every(g => g >= 10 && g <= 600)) { say("rMsg", t("regBadGoal"), "err"); return; }
+  // 같은 이름이 이미 있으면 = 앱을 다시 깔았거나 시간을 바꾸려는 본인 → 그 이름의 목표 시간만 새로 저장(기록은 유지)
+  const old = members.find(m => m.name === name);
   $("rSave").disabled = true;
-  const id = newId();
+  const id = old ? old.id : newId();
   try {
-    await setDoc(doc(db, "members", id), { name, goal });
+    await setDoc(doc(db, "members", id), { name, goal, goalSat, goalSun });
     try { localStorage.setItem("prayer.member", id); } catch (e) {}
-    say("rMsg", t("regOk")(name), "ok"); $("rName").value = "";
+    resetMode = false;
+    say("rMsg", old ? t("regReset")(name) : t("regOk")(name), "ok"); $("rName").value = "";
     setTimeout(() => { $("fName").value = id; }, 300);
   } catch (e) { say("rMsg", t("regFail"), "err"); }
   finally { $("rSave").disabled = false; }
