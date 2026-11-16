@@ -49,8 +49,10 @@ function members_() {
     var d = JSON.parse(UrlFetchApp.fetch(FS + "/members?pageSize=300" + (tok ? "&pageToken=" + tok : "")).getContentText());
     (d.documents || []).forEach(function (doc) {
       var f = doc.fields;
+      if (f.left && f.left.booleanValue === true) return;  // 탈퇴한 회원 제외 (2026-11-16)
       out.push({ id: doc.name.split("/").pop(), name: String(val_(f.name)), goal: +val_(f.goal) || 0,
-        goalSat: f.goalSat ? +val_(f.goalSat) || 0 : 0, goalSun: f.goalSun ? +val_(f.goalSun) || 0 : 0 });
+        goalSat: f.goalSat ? +val_(f.goalSat) || 0 : 0, goalSun: f.goalSun ? +val_(f.goalSun) || 0 : 0,
+        joined: f.joined ? String(val_(f.joined)) : "" });
     });
     tok = d.nextPageToken || "";
   } while (tok);
@@ -75,6 +77,14 @@ function report_(now) {
   var day = Utilities.formatString("%04d-%02d-%02d", y, mo + 1, da);
   var end = new Date(Date.UTC(y, mo, da + 1));
   var ms = members_(), es = entries_(day);
+  // 14일 동안 기록이 없으면 제외 (앱과 같은 규칙, 2026-11-16): 최근 14 기도일에 기록 있음 또는 그 안에 등록
+  var cut = new Date(Date.UTC(y, mo, da - 13)), cutoff = Utilities.formatString("%04d-%02d-%02d", cut.getUTCFullYear(), cut.getUTCMonth() + 1, cut.getUTCDate());
+  var rq = { structuredQuery: { from: [{ collectionId: "entries" }],
+    where: { fieldFilter: { field: { fieldPath: "date" }, op: "GREATER_THAN_OR_EQUAL", value: { stringValue: cutoff } } } } };
+  var recent = {};
+  JSON.parse(UrlFetchApp.fetch(FS + ":runQuery", { method: "post", contentType: "application/json", payload: JSON.stringify(rq) }).getContentText())
+    .forEach(function (r) { if (r.document) recent[String(val_(r.document.fields.member))] = true; });
+  ms = ms.filter(function (m) { return recent[m.id] || (m.joined && m.joined >= cutoff); });
   // 요일별 목표 (기도 하루가 끝나는 날=당일 기준: 토 → goalSat, 일 → goalSun, 그 밖 → goal) — 목사님 지시 2026-11-16
   var w = end.getUTCDay();
   var rows = ms.map(function (m) { return { n: m.name, mins: es[m.id] || 0, g: (w === 6 ? m.goalSat : w === 0 ? m.goalSun : 0) || m.goal }; })
