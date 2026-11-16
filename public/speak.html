@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>설교 통역 · 강단</title>
+<style>
+:root{--bg:#fff8ef;--ink:#3a2a1e;--soft:#8a7461;--peach:#ffb4a2;--deep:#e0715a;--gold:#ffd166;--card:#fff;--line:#f1dcc7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Malgun Gothic",system-ui,sans-serif;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
+main{max-width:760px;margin:0 auto;display:grid;gap:14px}
+h1{font-size:22px;margin:0}
+.card{background:var(--card);border-radius:20px;padding:16px;box-shadow:0 4px 0 var(--line);display:grid;gap:10px}
+label{display:grid;gap:4px;font-weight:700;font-size:14px}
+input{font:inherit;font-size:18px;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:#fffdf9}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 140px}
+button{font:inherit;font-weight:800;font-size:20px;border:0;border-radius:16px;padding:16px;cursor:pointer}
+#go{background:var(--peach);color:#4a1f12}#go.on{background:var(--deep);color:#fff}
+.state{font-size:15px;color:var(--soft)}
+.now{font-size:20px;min-height:1.6em;color:var(--soft)}
+ol{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:46vh;overflow:auto}
+ol li{border-left:4px solid var(--gold);padding:4px 10px}
+ol .ko{font-size:15px;color:var(--soft)}ol .zh{font-size:19px}
+.err{color:#b3261e;font-weight:700}
+.qr{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.qr a{word-break:break-all}
+#qr{background:#fff;padding:8px;border-radius:12px}
+</style>
+</head>
+<body>
+<main>
+  <h1>🎤 설교 실시간 통역 (강단용)</h1>
+  <section class="card">
+    <div class="row">
+      <label>통역 PIN<input id="pin" type="password" inputmode="numeric" autocomplete="off"></label>
+      <label>방 이름<input id="room" value="sunday" pattern="[a-z0-9-]{1,30}"></label>
+    </div>
+    <button id="go" type="button">▶ 통역 시작</button>
+    <p class="state" id="state">크롬(Chrome)에서 열고 마이크를 허용해 주세요.</p>
+    <p class="now" id="now"></p>
+  </section>
+  <section class="card qr">
+    <div id="qr"></div>
+    <div><b>교인들은 이 QR을 찍으세요</b><br><a id="link" target="_blank" rel="noopener"></a></div>
+  </section>
+  <section class="card"><b>번역된 문장</b><ol id="log"></ol></section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const db = getFirestore(initializeApp({ apiKey: "AIzaSyAALHdScHzNF3iWGXn9JS6YjLya0NBjPW4", authDomain: "ourfamily-prayer-11060015.firebaseapp.com",
+  projectId: "ourfamily-prayer-11060015", appId: "1:1029683333155:web:4675bfed8d72e770d34996", messagingSenderId: "1029683333155" }));
+// 번역 중계(Apps Script 웹앱) 주소 — 배포 후 채운다
+const RELAY = "https://script.google.com/macros/s/AKfycbwiabcWd52g10EOdvfjeZXhzFN8ZPZZJK36BIF1jG_nHs1T0K2PRuE2u9uCbPL2tG-9/exec";
+const $ = id => document.getElementById(id);
+try { $("pin").value = localStorage.getItem("interp.pin") || ""; $("room").value = localStorage.getItem("interp.room") || "sunday"; } catch (e) {}
+const room = () => ($("room").value.trim().toLowerCase().replace(/[^a-z0-9-]/g, "") || "sunday").slice(0, 30);
+function showQr() {
+  const url = new URL("live.html?room=" + room(), location.href).href;
+  $("link").href = url; $("link").textContent = url; $("qr").textContent = "";
+  try { new QRCode($("qr"), { text: url, width: 150, height: 150 }); } catch (e) {}
+}
+showQr(); $("room").addEventListener("change", showQr);
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, running = false, n = 0;
+const prev = [];
+async function translate(ko) {
+  const seq = Date.now() * 100 + (n++ % 100), r = room();
+  const li = document.createElement("li"); li.innerHTML = '<div class="ko"></div><div class="zh">…</div>';
+  li.querySelector(".ko").textContent = ko; $("log").prepend(li);
+  const ctx = prev.slice(-2); prev.push(ko);
+  try {
+    const res = await fetch(RELAY, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ pin: $("pin").value, text: ko, prev: ctx }) });
+    const j = await res.json();
+    if (j.error) { li.querySelector(".zh").innerHTML = '<span class="err">번역 오류: ' + (j.error === "bad_pin" ? "PIN이 맞지 않아요" : j.error) + "</span>"; return; }
+    if (!j.zh) { li.remove(); return; }
+    li.querySelector(".zh").textContent = j.zh;
+    await setDoc(doc(db, "live", r, "lines", String(seq)), { seq, ko: ko.slice(0, 2000), zh: j.zh.slice(0, 2000), at: Date.now() });
+  } catch (e) { li.querySelector(".zh").innerHTML = '<span class="err">인터넷 연결을 확인해 주세요</span>'; }
+}
+function start() {
+  if (!SR) { $("state").textContent = "이 브라우저는 음성 인식을 지원하지 않아요. 크롬(Chrome)으로 열어 주세요."; return; }
+  try { localStorage.setItem("interp.pin", $("pin").value); localStorage.setItem("interp.room", room()); } catch (e) {}
+  rec = new SR(); rec.lang = "ko-KR"; rec.continuous = true; rec.interimResults = true;
+  rec.onresult = ev => {
+    let interim = "";
+    for (let i = ev.resultIndex; i < ev.results.length; i++) {
+      const t = ev.results[i][0].transcript.trim();
+      if (ev.results[i].isFinal) { if (t) translate(t); } else interim += t;
+    }
+    $("now").textContent = interim;
+  };
+  rec.onerror = ev => { $("state").textContent = "음성 인식 오류: " + ev.error + (ev.error === "not-allowed" ? " — 마이크를 허용해 주세요" : ""); };
+  rec.onend = () => { if (running) { try { rec.start(); } catch (e) {} } };   // 크롬은 조용하면 멈춤 → 자동 재시작
+  running = true; rec.start();
+  $("go").textContent = "■ 통역 멈추기"; $("go").classList.add("on"); $("state").textContent = "듣고 있어요… 평소처럼 설교하세요.";
+}
+function stop() { running = false; try { rec && rec.stop(); } catch (e) {} $("go").textContent = "▶ 통역 시작"; $("go").classList.remove("on"); $("state").textContent = "멈췄어요."; $("now").textContent = ""; }
+$("go").addEventListener("click", () => running ? stop() : start());
+</script>
+</body>
+</html>

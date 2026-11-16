@@ -42,6 +42,18 @@ service cloud.firestore {
         && request.resource.data.minutes is int
         && request.resource.data.minutes >= 0 && request.resource.data.minutes <= 1440;
     }
+    // Live sermon interpretation (2026-11-16): the pulpit page (speak.html) appends one line per sentence,
+    // listeners (live.html) read. Lines are never changed or deleted by clients.
+    match /live/{room}/lines/{id} {
+      allow read: if room.matches('^[a-z0-9-]{1,30}$');
+      allow update, delete: if false;
+      allow create: if room.matches('^[a-z0-9-]{1,30}$')
+        && request.resource.data.keys().hasOnly(['seq', 'ko', 'zh', 'at'])
+        && request.resource.data.seq is int && id == string(request.resource.data.seq)
+        && request.resource.data.ko is string && request.resource.data.ko.size() <= 2000
+        && request.resource.data.zh is string && request.resource.data.zh.size() >= 1 && request.resource.data.zh.size() <= 2000
+        && request.resource.data.at is int;
+    }
     match /{other=**} { allow read, write: if false; }
   }
 }

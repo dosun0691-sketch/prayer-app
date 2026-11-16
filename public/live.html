@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>主日講道 即時翻譯</title>
+<style>
+:root{--bg:#1d1a17;--ink:#fff7ea;--soft:#c9b9a3;--gold:#ffd166;--card:#2a2520}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px;
+  display:flex;flex-direction:column;gap:10px}
+header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+header img{width:34px;height:34px;border-radius:50%;background:#fff}
+header b{font-size:18px;flex:1 1 auto}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-size:15px;font-weight:700;border:0;border-radius:99px;padding:8px 14px;background:var(--card);color:var(--ink);cursor:pointer}
+button[aria-pressed="true"]{background:var(--gold);color:#3a2a10}
+#status{font-size:14px;color:var(--soft)}
+#latest{background:var(--card);border-radius:20px;padding:18px;font-size:calc(26px * var(--z,1));line-height:1.5;min-height:4em}
+#latest .ko,#lines .ko{display:none;color:var(--soft);font-size:.62em;margin-top:6px}
+body.ko #latest .ko,body.ko #lines .ko{display:block}
+ol{list-style:none;margin:0;padding:0;display:grid;gap:12px;overflow:auto;flex:1 1 auto;font-size:calc(19px * var(--z,1));line-height:1.5}
+ol li{opacity:.8;border-left:3px solid #ffd16688;padding-left:10px}
+</style>
+</head>
+<body>
+<header>
+  <img src="logo.png" alt=""><b>我們家教會 · 講道即時翻譯</b>
+  <div class="tools">
+    <button type="button" id="tts" aria-pressed="false">🔈 朗讀</button>
+    <button type="button" id="ko" aria-pressed="false">한국어</button>
+    <button type="button" id="smaller">A−</button><button type="button" id="bigger">A+</button>
+  </div>
+</header>
+<p id="status">連線中…</p>
+<div id="latest" aria-live="polite"><div class="zh">等待牧師開始講道…</div><div class="ko"></div></div>
+<ol id="lines"></ol>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const db = getFirestore(initializeApp({ apiKey: "AIzaSyAALHdScHzNF3iWGXn9JS6YjLya0NBjPW4", authDomain: "ourfamily-prayer-11060015.firebaseapp.com",
+  projectId: "ourfamily-prayer-11060015", appId: "1:1029683333155:web:4675bfed8d72e770d34996", messagingSenderId: "1029683333155" }));
+const $ = id => document.getElementById(id);
+const room = (new URLSearchParams(location.search).get("room") || "sunday").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 30) || "sunday";
+let z = 1, tts = false, seen = new Set(), first = true;
+try { z = +localStorage.getItem("live.z") || 1; } catch (e) {}
+const setZ = v => { z = Math.min(2.2, Math.max(.7, v)); document.body.style.setProperty("--z", z); try { localStorage.setItem("live.z", z); } catch (e) {} };
+setZ(z);
+$("bigger").onclick = () => setZ(z + .15); $("smaller").onclick = () => setZ(z - .15);
+$("ko").onclick = () => { const on = document.body.classList.toggle("ko"); $("ko").setAttribute("aria-pressed", on); };
+$("tts").onclick = () => {
+  tts = !tts; $("tts").setAttribute("aria-pressed", tts);
+  if (tts && "speechSynthesis" in window) speechSynthesis.speak(Object.assign(new SpeechSynthesisUtterance("開始朗讀"), { lang: "zh-TW" }));
+  if (!tts && "speechSynthesis" in window) speechSynthesis.cancel();
+};
+const say = t => { if (tts && "speechSynthesis" in window) speechSynthesis.speak(Object.assign(new SpeechSynthesisUtterance(t), { lang: "zh-TW", rate: 1.05 })); };
+const item = d => { const li = document.createElement("li"); const a = document.createElement("div"); a.className = "zh"; a.textContent = d.zh;
+  const b = document.createElement("div"); b.className = "ko"; b.textContent = d.ko; li.append(a, b); return li; };
+onSnapshot(query(collection(db, "live", room, "lines"), orderBy("seq", "desc"), limit(40)), s => {
+  const docs = s.docs.map(d => d.data());
+  $("status").textContent = "● 已連線 · 房間 " + room;
+  if (!docs.length) return;
+  const [top, ...rest] = docs;
+  $("latest").querySelector(".zh").textContent = top.zh; $("latest").querySelector(".ko").textContent = top.ko;
+  $("lines").replaceChildren(...rest.map(item));
+  // 새 문장만 읽어 주기 (처음 열 때 지난 문장은 읽지 않음)
+  docs.slice().reverse().forEach(d => { if (!seen.has(d.seq)) { seen.add(d.seq); if (!first) say(d.zh); } });
+  first = false;
+}, () => { $("status").textContent = "連線失敗，請重新整理頁面。"; });
+</script>
+</body>
+</html>
