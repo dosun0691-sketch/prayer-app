@@ -75,8 +75,8 @@ function report_(now) {
   var day = Utilities.formatString("%04d-%02d-%02d", y, mo + 1, da);
   var end = new Date(Date.UTC(y, mo, da + 1));
   var ms = members_(), es = entries_(day);
-  // 요일별 목표 (기도 하루의 시작 날짜 기준: 토 → goalSat, 일 → goalSun, 그 밖 → goal)
-  var w = new Date(Date.UTC(y, mo, da)).getUTCDay();
+  // 요일별 목표 (기도 하루가 끝나는 날=당일 기준: 토 → goalSat, 일 → goalSun, 그 밖 → goal) — 목사님 지시 2026-11-16
+  var w = end.getUTCDay();
   var rows = ms.map(function (m) { return { n: m.name, mins: es[m.id] || 0, g: (w === 6 ? m.goalSat : w === 0 ? m.goalSun : 0) || m.goal }; })
     .sort(function (a, b) { return (b.g ? b.mins / b.g : 0) - (a.g ? a.mins / a.g : 0) || (a.n < b.n ? -1 : 1); });
   var tm = 0, tg = 0, done = 0;

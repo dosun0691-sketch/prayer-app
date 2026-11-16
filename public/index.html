@@ -386,8 +386,9 @@ const colorFor = s => COLORS[[...s].reduce((a, c) => a + c.codePointAt(0), 0) % 
 const CIRC = 590.6;
 let members = [], entries = [], loadedMembers = false, loadedEntries = false, period = 0, resetMode = false;
 
-// 요일별 목표: 기도 하루의 시작 날짜 기준 (토 → goalSat, 일 → goalSun, 그 밖 → goal). 예전 회원은 goal 하나로 대신한다.
-const dow = ds => { const [y, mo, da] = ds.split("-").map(Number); return new Date(y, mo - 1, da).getDay(); };
+// 요일별 목표: 기도 하루가 끝나는 날(=당일, 전날 18시~당일 10시) 기준 (토 → goalSat, 일 → goalSun, 그 밖 → goal).
+// 목사님 지시 2026-11-16: 월요일 아침 기도는 월요일(평일) 목표. 날짜 키(ds)는 기존대로 시작일이라 +1일 한다. 예전 회원은 goal 하나로 대신한다.
+const dow = ds => { const [y, mo, da] = ds.split("-").map(Number); return new Date(y, mo - 1, da + 1).getDay(); };
 const goalFor = (m, ds) => { const w = dow(ds); return (w === 6 ? m.goalSat : w === 0 ? m.goalSun : 0) || m.goal || 0; };
 const totalGoal = ds => members.reduce((s, m) => s + goalFor(m, ds), 0);
 function pctFor(date) {
