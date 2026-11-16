@@ -6,7 +6,7 @@
  *   SPEAKER_PIN        — 목사님 화면에서 입력하는 숫자(다른 사람이 번역 요금을 쓰지 못하게) (또는 INTERP_PIN)
  * Apps Script 에는 공식 Anthropic SDK 가 없어 HTTP 로 직접 호출한다.
  */
-var MODEL = "claude-opus-5-5";
+var MODEL = "claude-sonnet-5-5";   // 목사님 선택 2026-11-16: 한→중 번역, 1시간 약 $1 이하 목표
 
 var SYSTEM = [
   "You are the live interpreter for a Korean pastor preaching at 我們家教會, a Taiwanese church in Taichung.",
@@ -39,7 +39,8 @@ function doPost(e) {
   var req = {
     model: MODEL,
     max_tokens: 2000,
-    output_config: { effort: "low" },          // live captions: speed over depth (Opus 5.5 default is medium)
+    thinking: { type: "between_tools" },     // plain translation: no reasoning pass (faster, cheaper); needs effort <= high
+    output_config: { effort: "low" },        // live captions: speed over depth
     fallbacks: "default",                      // server-side refusal fallback (beta header below)
     system: SYSTEM,
     messages: [{ role: "user", content: user }]
