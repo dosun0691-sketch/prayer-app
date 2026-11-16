@@ -30,6 +30,7 @@ function doPost(e) {
   var body;
   try { body = JSON.parse(e.postData.contents); } catch (err) { return json_({ error: "bad_json" }); }
   if (!body || !PIN || String(body.pin || "") !== String(PIN)) return json_({ error: "bad_pin" });
+  if (!KEY) return json_({ error: "no_key" });
   var text = String(body.text || "").trim().slice(0, 1500);
   if (!text) return json_({ zh: "" });
   var prev = (body.prev || []).slice(-2).map(function (s) { return String(s).slice(0, 400); });
