@@ -17,6 +17,3 @@ line/group_id.txt
 line/gas/Secrets.js
 line/gas/.clasp.json
 
-# live interpretation relay: secrets + clasp project id stay local
-interpret/gas/Secrets.js
-interpret/gas/.clasp.json
