@@ -8,6 +8,9 @@ var PROJECT = "ourfamily-prayer-11060015";
 var APP_URL = "https://ourfamily-prayer-11060015.web.app/";
 var FS = "https://firestore.googleapis.com/v1/projects/" + PROJECT + "/databases/(default)/documents";
 var KEYWORD = /^\s*(結果|结果|결과)\s*$/;
+var QR_WORD = /^\s*(QR|qr|ＱＲ|QR碼|QR码|二維碼|二维码|큐알|QR코드)\s*$/;
+var QR_IMG = APP_URL + "qr-card.png";   // 새 앱(1.0.3) QR 안내 그림
+var QR_TEXT = "新版App 1.0.3 🙏 用手機相機掃描下面的QR碼安裝。已經安裝的人，刪除舊App後重新安裝就會換新圖示（紀錄保留）。\n새 앱 1.0.3 — QR코드를 찍어 설치하세요. 이미 설치한 분은 지우고 다시 설치하면 새 그림이 됩니다 (기록은 그대로).";
 
 function doPost(e) {
   var body = JSON.parse(e.postData.contents || "{}");
@@ -15,8 +18,15 @@ function doPost(e) {
     if (!ev.replyToken) return;
     if (ev.type === "join") {
       reply_(ev.replyToken, "大家好！我是阿坤 🙏\n想知道禱告達成表的結果，請輸入「結果」。");
+    } else if (ev.type === "message" && ev.message && ev.message.type === "text" && QR_WORD.test(ev.message.text)) {
+      replyMsgs_(ev.replyToken, [{ type: "text", text: QR_TEXT }, qrImage_()]);
     } else if (ev.type === "message" && ev.message && ev.message.type === "text" && KEYWORD.test(ev.message.text)) {
-      reply_(ev.replyToken, report_(new Date()));
+      var msgs = [{ type: "text", text: report_(new Date()).slice(0, 5000) }];
+      // 새 QR 안내는 각 단톡방에 한 번만 붙인다 (답장이라 무료)
+      var key = "qrSent_v103_" + ((ev.source && (ev.source.groupId || ev.source.roomId || ev.source.userId)) || "x");
+      var props = PropertiesService.getScriptProperties();
+      if (!props.getProperty(key)) { msgs.push({ type: "text", text: QR_TEXT }, qrImage_()); props.setProperty(key, new Date().toISOString()); }
+      replyMsgs_(ev.replyToken, msgs);
     }
   });
   return ContentService.createTextOutput("ok");
@@ -31,6 +41,16 @@ function accessToken_() {
     method: "post", payload: { grant_type: "client_credentials", client_id: SECRETS.CHANNEL_ID, client_secret: SECRETS.CHANNEL_SECRET }
   });
   return JSON.parse(r.getContentText()).access_token;
+}
+
+function qrImage_() { return { type: "image", originalContentUrl: QR_IMG, previewImageUrl: QR_IMG }; }
+
+function replyMsgs_(token, messages) {
+  UrlFetchApp.fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "post", contentType: "application/json", muteHttpExceptions: true,
+    headers: { Authorization: "Bearer " + accessToken_() },
+    payload: JSON.stringify({ replyToken: token, messages: messages })
+  });
 }
 
 function reply_(token, text) {
