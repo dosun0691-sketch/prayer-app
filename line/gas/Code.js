@@ -12,10 +12,31 @@ var QR_WORD = /^\s*(QR|qr|ＱＲ|QR碼|QR码|二維碼|二维码|큐알|QR코드
 var QR_IMG = APP_URL + "qr-card.png";   // 새 앱(1.0.3) QR 안내 그림
 var QR_TEXT = "新版App 1.0.3 🙏 用手機相機掃描下面的QR碼安裝。已經安裝的人，刪除舊App後重新安裝就會換新圖示（紀錄保留）。\n새 앱 1.0.3 — QR코드를 찍어 설치하세요. 이미 설치한 분은 지우고 다시 설치하면 새 그림이 됩니다 (기록은 그대로).";
 
+// BEST 앱 QR (교회 열쇠가 들어 있음) — 등록된 동역자 방에서만 답한다 (목사님 지시 2026-11-17)
+// 동역자 방에서 한 번: 「同工登記 <코드>」 (코드는 Secrets.js 의 BEST_REG) → 그 방만 등록. 이후 「BEST」 치면 QR 답장.
+var BEST_WORD = /^\s*(BEST|best|Best|ＢＥＳＴ)\s*(QR|qr|ＱＲ)?\s*$/;
+var BEST_REG_WORD = /^\s*同工登記\s+(\S+)\s*$/;
+var BEST_TEXT = "BEST 關懷 App（同工專用）🙏 用手機相機掃描下面的QR碼安裝，不需要登入。請不要轉傳到其他群組。\nBEST 돌봄 앱 (동역자 전용) — QR코드를 찍어 설치하세요. 로그인은 필요 없습니다. 다른 방에는 올리지 말아 주세요.";
+function roomKey_(ev) { return "bestRoom_" + ((ev.source && (ev.source.groupId || ev.source.roomId)) || "none"); }
+function bestMsgs_() { return [{ type: "text", text: BEST_TEXT }, { type: "image", originalContentUrl: SECRETS.BEST_QR, previewImageUrl: SECRETS.BEST_QR }]; }
+
 function doPost(e) {
   var body = JSON.parse(e.postData.contents || "{}");
   (body.events || []).forEach(function (ev) {
     if (!ev.replyToken) return;
+    var txt = (ev.type === "message" && ev.message && ev.message.type === "text") ? ev.message.text : null;
+    if (txt !== null && BEST_REG_WORD.test(txt)) {
+      var m = txt.match(BEST_REG_WORD), inRoom = ev.source && (ev.source.groupId || ev.source.roomId);
+      if (inRoom && m[1] === SECRETS.BEST_REG) {
+        PropertiesService.getScriptProperties().setProperty(roomKey_(ev), new Date().toISOString());
+        replyMsgs_(ev.replyToken, [{ type: "text", text: "✅ 這個群組已登記為同工群組。以後輸入「BEST」就會收到 BEST 關懷 App 的 QR 碼。\n✅ 이 방을 동역자 방으로 등록했습니다. 앞으로 「BEST」라고 치면 QR을 보내 드립니다." }].concat(bestMsgs_()));
+      }
+      return;   // wrong code or 1:1 chat: stay silent
+    }
+    if (txt !== null && BEST_WORD.test(txt)) {
+      if (PropertiesService.getScriptProperties().getProperty(roomKey_(ev))) replyMsgs_(ev.replyToken, bestMsgs_());
+      return;   // not a registered 同工 room: stay silent
+    }
     if (ev.type === "join") {
       reply_(ev.replyToken, "大家好！我是阿坤 🙏\n想知道禱告達成表的結果，請輸入「結果」。");
     } else if (ev.type === "message" && ev.message && ev.message.type === "text" && QR_WORD.test(ev.message.text)) {
