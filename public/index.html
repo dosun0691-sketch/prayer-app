@@ -209,7 +209,6 @@ button:disabled{opacity:.5}
       <div class="stat"><span class="k" id="sLeftK" data-t="sLeft">남은 시간</span><b id="sLeft">–</b></div>
     </div>
     <p class="det" id="dToday"></p>
-    <div class="yest"><span data-t="yesterday">어제</span><b id="pYest">–</b><span class="det" id="dYest"></span></div>
     <div class="btns">
       <button type="button" class="more" id="avgBtn" aria-expanded="false" aria-controls="avgBox" data-t="avgOpen">전체 평균 달성률</button>
       <button type="button" class="more alt" id="resBtn" aria-expanded="false" aria-controls="resBox" data-t="resOpen">모두의 결과 보기</button>
@@ -218,11 +217,6 @@ button:disabled{opacity:.5}
 
   <section class="card avgcard" id="avgBox" hidden>
     <h2><span class="dot" style="background:var(--sun)"><svg width="18" height="18" aria-hidden="true"><use href="#star"/></svg></span><span data-t="avgTitle">전체 회원 평균 달성률</span></h2>
-    <div class="seg" role="group" id="avgSeg">
-      <button type="button" data-p="0" class="on" data-t="today">오늘</button>
-      <button type="button" data-p="1" data-t="yesterday">어제</button>
-      <button type="button" data-p="7" data-t="week">최근 7일</button>
-    </div>
     <div class="avgbig" id="avgPct">–</div>
     <div class="bar avgbar"><i id="avgFill"></i></div>
     <p class="avgline" id="avgLine"></p>
@@ -231,11 +225,6 @@ button:disabled{opacity:.5}
 
   <section class="card" id="resBox" hidden>
     <h2><span class="dot" style="background:var(--lilac)"><svg width="18" height="18" aria-hidden="true"><use href="#star"/></svg></span><span data-t="resTitle">신자별 결과</span></h2>
-    <div class="seg" role="group">
-      <button type="button" data-p="0" class="on" data-t="today">오늘</button>
-      <button type="button" data-p="1" data-t="yesterday">어제</button>
-      <button type="button" data-p="7" data-t="week">최근 7일</button>
-    </div>
     <ul class="people" id="resRows"></ul>
     <div class="total" id="resTotal"></div>
     <p class="note" id="resNote" style="margin-top:8px"></p>
@@ -411,8 +400,6 @@ function render() {
   $("sLeft").parentElement.classList.toggle("done", loadedEntries && left <= 0 && tp.g > 0);
   $("pPeriod").textContent = periodText(daysAgo(0));
   $("fPeriod").textContent = periodText($("fDate").value);
-  $("pYest").textContent = loadedEntries ? y.p + "%" : "–";
-  $("dYest").textContent = loadedEntries ? fmtMin(y.sum) + " / " + fmtMin(y.g) : "";
   $("goalLine").textContent = !loadedMembers ? t(status.members) : members.length ? t("goalLine")(members.length, fmtMin(totalGoal(daysAgo(0)))) : t("noMembers");
   let mine = null; try { mine = localStorage.getItem("prayer.member"); } catch (e) {}
   const me = members.find(m => m.id === mine);
