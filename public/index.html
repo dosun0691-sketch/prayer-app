@@ -54,10 +54,15 @@ h1{font-family:var(--display);font-weight:400;font-size:28px;margin:0;letter-spa
 /* hero */
 .hero{position:relative;background:var(--paper);border-radius:28px;padding:18px 16px 16px;box-shadow:0 6px 0 var(--line);text-align:center;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:auto -40px -80px -40px;height:160px;background:var(--sky);opacity:.25;border-radius:50%}
-.ring{position:relative;width:220px;max-width:70vw;aspect-ratio:1;margin:0 auto}
-.ring svg{width:100%;height:100%;display:block}
-.ring .center{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:0}
-.hands{width:46%;height:auto}
+.ring{position:relative;width:300px;max-width:88vw;aspect-ratio:1;margin:0 auto}
+.ring>svg{width:100%;height:100%;display:block}
+/* 기도 사진(목사님 제공 「스테인드글라스 아래의 기도」, 2026-11-16) — 원 안을 가득 채우고 아래쪽에 달성률을 겹쳐 쓴다 */
+.ring .photo{position:absolute;inset:10.5%;border-radius:50%;overflow:hidden;box-shadow:inset 0 0 0 3px #fff8,0 4px 18px #c9874a55}
+.ring .photo img{width:100%;height:100%;object-fit:cover;display:block}
+.ring .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,transparent 42%,rgba(40,20,5,.72) 100%)}
+.ring .center{position:absolute;inset:10.5%;display:grid;justify-items:center;align-content:end;padding-bottom:4%;gap:0;border-radius:50%}
+.ring .center .lbl{color:#ffe9c7;text-shadow:0 1px 4px #000a}
+.ring .center .big{color:#fff;font-size:52px;text-shadow:0 2px 10px #000b}
 .big{font-family:var(--display);font-size:54px;color:var(--peach-deep);line-height:1;margin-top:2px;font-variant-numeric:tabular-nums}
 .lbl{font-family:var(--display);font-size:15px;color:var(--peach-deep)}
 .cheer{position:relative;font-family:var(--display);font-size:24px;color:var(--peach-deep);margin:10px 0 2px}
@@ -70,6 +75,8 @@ h1{font-family:var(--display);font-weight:400;font-size:28px;margin:0;letter-spa
   .sparkle.s2{animation-delay:.8s}.sparkle.s3{animation-delay:1.6s}
   @keyframes twinkle{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.6);opacity:.5}}
   #ringFg{transition:stroke-dashoffset .9s cubic-bezier(.3,1.3,.5,1)}
+  .hands .halo{transform-origin:60px 56px;animation:halo 3.2s ease-in-out infinite}
+  @keyframes halo{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.07);opacity:.8}}
   .bar>i{transition:width .6s ease}
 }
 .more{position:relative;margin-top:14px;width:100%;font-family:var(--display);font-size:18px;background:var(--sun);color:#4a3b35;border:0;border-radius:18px;padding:12px;cursor:pointer;box-shadow:0 4px 0 #e9b43f}
@@ -195,8 +202,8 @@ button:disabled{opacity:.5}
         <circle id="ringFg" cx="110" cy="110" r="94" fill="none" stroke="url(#rg)" stroke-width="18" stroke-linecap="round" transform="rotate(-90 110 110)" stroke-dasharray="590.6" stroke-dashoffset="590.6"/>
         <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb4a2"/><stop offset="1" stop-color="#ffd166"/></linearGradient></defs>
       </svg>
+      <div class="photo" aria-hidden="true"><img src="pray-photo.jpg" alt="" width="640" height="640" decoding="async"></div>
       <div class="center">
-        <svg class="hands" viewBox="0 0 120 120" aria-hidden="true"><use href="#pray"/></svg>
         <span class="lbl" data-t="today">오늘</span>
         <span class="big" id="pToday">–</span>
       </div>
@@ -260,6 +267,8 @@ button:disabled{opacity:.5}
       <button class="main peach" id="fSave" type="submit" data-t="recBtn">기록하기</button>
       <p class="note" id="myGoals" style="font-size:15px;color:var(--ink)"></p>
       <button type="button" class="relink" id="resetBtn" data-t="resetBtn">내 목표 시간 다시 설정하기</button>
+      <button type="button" class="relink" id="leaveBtn" data-t="leaveBtn" hidden>참여 그만하기 (탈퇴)</button>
+      <p class="note" data-t="leaveHelp">14일 동안 기록이 없으면 자동으로 명단에서 빠져요. 같은 이름으로 다시 등록하면 돌아와요.</p>
       <div class="msg" id="fMsg" role="status"></div>
     </form>
   </section>
@@ -278,6 +287,10 @@ const T = {
     resetBtn:"내 목표 시간 다시 설정하기", regTitleReset:"내 목표 시간 다시 설정",
     myGoals:(a,b,c)=>`내 목표 · 월~금 ${a} · 토 ${b} · 주일 ${c}`,
     regReset:n=>`${n}님의 목표 시간을 새로 저장했어요. 지난 기록은 그대로 남아 있어요.`,
+    leaveBtn:"참여 그만하기 (탈퇴)", leaveSure:"정말 그만할까요? 한 번 더 누르면 탈퇴돼요", leaveOk:n=>`${n}님은 탈퇴되었어요. 같은 이름으로 다시 등록하면 언제든 돌아올 수 있어요.`,
+    leaveFail:"탈퇴하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.",
+    leaveHelp:"14일 동안 기록이 없으면 자동으로 명단에서 빠져요. 같은 이름으로 다시 등록하면 돌아와요.",
+    restNote:"14일 동안 기록이 없어 명단에서 쉬는 중이에요. 아래에서 같은 이름으로 다시 등록하면 돌아와요.",
     setNeeded:"요일별(월~금·토·주일) 목표 시간을 새로 정해 주세요!",
     regNote:"앱을 지우고 다시 깔았을 때도 같은 이름으로 다시 등록하면 목표 시간을 새로 정할 수 있어요(지난 기록은 그대로). 이름을 지워야 하면 목사님께 말씀해 주세요.", namePh:"예: 김은혜",
     recTitle:"기도 시간 기록", date:"날짜", minutes:"기도시간(분)", recBtn:"기도했어요! 기록하기",
@@ -310,6 +323,10 @@ const T = {
     resetBtn:"重新設定我的目標時間", regTitleReset:"重新設定我的目標時間",
     myGoals:(a,b,c)=>`我的目標 · 週一～五 ${a} · 週六 ${b} · 主日 ${c}`,
     regReset:n=>`${n}的目標時間已重新儲存。之前的紀錄都還保留著。`,
+    leaveBtn:"不再參加（退出）", leaveSure:"確定要退出嗎？再按一次就會退出", leaveOk:n=>`${n}已退出。用同樣的名字重新登記，隨時都可以回來。`,
+    leaveFail:"退出失敗，請確認網路連線後再按一次。",
+    leaveHelp:"14天沒有紀錄會自動從名單移除。用同樣的名字重新登記就能回來。",
+    restNote:"因為14天沒有紀錄，目前暫時不在名單中。請在下方用同樣的名字重新登記就能回來。",
     setNeeded:"請重新設定週一～五、週六、主日的目標時間！",
     regNote:"刪除App重新安裝後，用同樣的名字再登記一次，就可以重新設定目標時間（之前的紀錄保留）。需要刪除名字時，請告訴牧師。", namePh:"例如：王小明",
     recTitle:"記錄禱告時間", date:"日期", minutes:"禱告時間（分鐘）", recBtn:"我禱告了！記錄",
@@ -369,10 +386,19 @@ const fmtMin = m => { m = +m || 0; const h = Math.floor(m / 60), r = m % 60; ret
 const COLORS = ["#ffb4a2", "#ffd166", "#a8d8f0", "#b8e6c8", "#d7c4f0", "#ffc9de"];
 const colorFor = s => COLORS[[...s].reduce((a, c) => a + c.codePointAt(0), 0) % COLORS.length];
 const CIRC = 590.6;
-let members = [], entries = [], loadedMembers = false, loadedEntries = false, period = 0, resetMode = false;
+let members = [], allMembers = [], entries = [], loadedMembers = false, loadedEntries = false, period = 0, resetMode = false;
+// 탈퇴 (목사님 지시 2026-11-16, A+B): B = 「참여 그만하기」 버튼(left:true), A = 최근 14일 기록이 없으면 자동 제외
+// (앱을 지운 사람은 기록이 끊기므로 자연히 빠진다). 기록은 지우지 않고, 같은 이름으로 다시 등록하면 돌아온다.
+const INACTIVE_DAYS = 14;
+function refreshActive() {
+  if (!loadedEntries) { members = allMembers.filter(m => !m.left); return; }
+  const cutoff = daysAgo(INACTIVE_DAYS - 1), recent = new Set(entries.filter(e => e.date >= cutoff).map(e => e.member));
+  members = allMembers.filter(m => !m.left && (recent.has(m.id) || (m.joined && m.joined >= cutoff)));
+}
 
-// 요일별 목표: 기도 하루의 시작 날짜 기준 (토 → goalSat, 일 → goalSun, 그 밖 → goal). 예전 회원은 goal 하나로 대신한다.
-const dow = ds => { const [y, mo, da] = ds.split("-").map(Number); return new Date(y, mo - 1, da).getDay(); };
+// 요일별 목표: 기도 하루가 끝나는 날(=당일, 전날 18시~당일 10시) 기준 (토 → goalSat, 일 → goalSun, 그 밖 → goal).
+// 목사님 지시 2026-11-16: 월요일 아침 기도는 월요일(평일) 목표. 날짜 키(ds)는 기존대로 시작일이라 +1일 한다. 예전 회원은 goal 하나로 대신한다.
+const dow = ds => { const [y, mo, da] = ds.split("-").map(Number); return new Date(y, mo - 1, da + 1).getDay(); };
 const goalFor = (m, ds) => { const w = dow(ds); return (w === 6 ? m.goalSat : w === 0 ? m.goalSun : 0) || m.goal || 0; };
 const totalGoal = ds => members.reduce((s, m) => s + goalFor(m, ds), 0);
 function pctFor(date) {
@@ -405,6 +431,8 @@ function render() {
   if (me && !$("regBox").hidden && !$("rName").value) { $("rName").value = me.name; $("rGoal").value = me.goal; $("rSat").value = me.goalSat || me.goal; $("rSun").value = me.goalSun || me.goal; }
   $("myGoals").textContent = me ? t("myGoals")(fmtMin(me.goal), fmtMin(me.goalSat || me.goal), fmtMin(me.goalSun || me.goal)) : "";
   $("resetBtn").hidden = !me || !$("regBox").hidden;
+  $("leaveBtn").hidden = !me;
+  if (!me && mine && allMembers.some(m => m.id === mine) && !$("rMsg").textContent) say("rMsg", t("restNote"), "err");
   const s = $("fName"), cur = s.value; s.textContent = "";
   members.forEach(m => { const o = document.createElement("option"); o.value = m.id; o.textContent = t("goalOpt")(m.name, goalFor(m, daysAgo(0))); s.appendChild(o); });
   if (cur && members.some(m => m.id === cur)) s.value = cur; else if (mine && members.some(m => m.id === mine)) s.value = mine;
@@ -511,12 +539,15 @@ applyLang();
 const timer = setTimeout(() => { status.today = "netSlow"; render(); }, 10000);
 onSnapshot(collection(db, "members"), s => {
   loadedMembers = true;
-  members = s.docs.map(d => ({ id: d.id, name: String(d.data().name), goal: +d.data().goal || 0, goalSat: +d.data().goalSat || 0, goalSun: +d.data().goalSun || 0 })).sort((a, b) => a.name.localeCompare(b.name));
+  allMembers = s.docs.map(d => ({ id: d.id, name: String(d.data().name), goal: +d.data().goal || 0, goalSat: +d.data().goalSat || 0, goalSun: +d.data().goalSun || 0,
+    joined: typeof d.data().joined === "string" ? d.data().joined : "", left: d.data().left === true })).sort((a, b) => a.name.localeCompare(b.name));
+  refreshActive();
   render();
 }, () => { status.members = "membersFail"; render(); });
 onSnapshot(query(collection(db, "entries"), where("date", ">=", daysAgo(13))), s => {
   clearTimeout(timer); loadedEntries = true;
   entries = s.docs.map(d => d.data()).map(e => ({ date: String(e.date), member: String(e.member), minutes: +e.minutes || 0 }));
+  refreshActive();
   render();
 }, () => { clearTimeout(timer); status.today = "loadFail"; render(); });
 
@@ -528,17 +559,35 @@ $("r").addEventListener("submit", async ev => {
   if (!name || name.length > 20) { say("rMsg", t("regBadName"), "err"); return; }
   if (![goal, goalSat, goalSun].every(g => g >= 10 && g <= 600)) { say("rMsg", t("regBadGoal"), "err"); return; }
   // 같은 이름이 이미 있으면 = 앱을 다시 깔았거나 시간을 바꾸려는 본인 → 그 이름의 목표 시간만 새로 저장(기록은 유지)
-  const old = members.find(m => m.name === name);
+  // 탈퇴했거나 쉬는 중(14일 무기록)인 같은 이름도 찾아서 그 기록을 이어 쓴다 → 다시 등록 = 복귀
+  const old = allMembers.find(m => m.name === name);
   $("rSave").disabled = true;
   const id = old ? old.id : newId();
   try {
-    await setDoc(doc(db, "members", id), { name, goal, goalSat, goalSun });
+    // 기존 회원은 merge(바뀐 칸만 저장) — 2026-11-16 실측: 전체 덮어쓰기는 거부되고 merge 는 통과
+    if (old) await setDoc(doc(db, "members", id), { name, goal, goalSat, goalSun, joined: daysAgo(0), left: false }, { merge: true });
+    else await setDoc(doc(db, "members", id), { name, goal, goalSat, goalSun, joined: daysAgo(0), left: false });
     try { localStorage.setItem("prayer.member", id); } catch (e) {}
     resetMode = false;
     say("rMsg", old ? t("regReset")(name) : t("regOk")(name), "ok"); $("rName").value = "";
     setTimeout(() => { $("fName").value = id; }, 300);
   } catch (e) { say("rMsg", t("regFail"), "err"); }
   finally { $("rSave").disabled = false; }
+});
+// B: 탈퇴 버튼 — 두 번 눌러야 탈퇴(실수 방지). 기록은 지우지 않고 left:true 표시만 한다.
+let leaveArmed = false;
+$("leaveBtn").addEventListener("click", async () => {
+  let mine = null; try { mine = localStorage.getItem("prayer.member"); } catch (e) {}
+  const me = allMembers.find(m => m.id === mine);
+  if (!me) return;
+  if (!leaveArmed) { leaveArmed = true; $("leaveBtn").textContent = t("leaveSure"); setTimeout(() => { leaveArmed = false; $("leaveBtn").textContent = t("leaveBtn"); }, 6000); return; }
+  leaveArmed = false; $("leaveBtn").disabled = true;
+  try {
+    await setDoc(doc(db, "members", me.id), { left: true, leftAt: daysAgo(0) }, { merge: true });
+    try { localStorage.removeItem("prayer.member"); } catch (e) {}
+    say("fMsg", t("leaveOk")(me.name), "ok");
+  } catch (e) { say("fMsg", t("leaveFail"), "err"); }
+  finally { $("leaveBtn").disabled = false; $("leaveBtn").textContent = t("leaveBtn"); }
 });
 $("f").addEventListener("submit", async ev => {
   ev.preventDefault();
