@@ -53,7 +53,23 @@ function doPost(e) {
   return ContentService.createTextOutput("ok");
 }
 
-function doGet() { return ContentService.createTextOutput("阿坤 ok"); }
+// 관리용: ?k=<BEST_REG> → 등록된 동역자 방 수, &push=1 → 그 방들에 BEST QR 올리기 (목사님 지시 2026-11-17)
+function doGet(e) {
+  var p = (e && e.parameter) || {};
+  if (!p.k || p.k !== SECRETS.BEST_REG) return ContentService.createTextOutput("阿坤 ok");
+  var all = PropertiesService.getScriptProperties().getProperties(), rooms = [];
+  Object.keys(all).forEach(function (k) { if (k.indexOf("bestRoom_") === 0 && k !== "bestRoom_none") rooms.push(k.slice(9)); });
+  var out = ["rooms=" + rooms.length];
+  if (p.push === "1") rooms.forEach(function (to) {
+    var r = UrlFetchApp.fetch("https://api.line.me/v2/bot/message/push", {
+      method: "post", contentType: "application/json", muteHttpExceptions: true,
+      headers: { Authorization: "Bearer " + accessToken_() },
+      payload: JSON.stringify({ to: to, messages: bestMsgs_() })
+    });
+    out.push("push " + to.slice(0, 6) + "… " + r.getResponseCode());
+  });
+  return ContentService.createTextOutput(out.join("\n"));
+}
 
 // 채널 ID·시크릿으로 15분짜리 토큰을 그때그때 받는다 (만료 걱정 없음)
 function accessToken_() {
